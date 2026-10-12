@@ -1,6 +1,6 @@
 # Concept C Evolution — этап 12
 
-**Локальная ветка для проверки; публикация в main ожидает разрешения владельца.**
+**Concept C Evolution: публикация исходников одобрена владельцем после проверки CI.**
 Основа — публичный main `f9c58f164b96bd899ca6cf0c56c023785ec4778c`,
 содержащий локализацию RU/EN. Этап 11 не перенесён. Версия остаётся 0.7.0 Public Alpha.
 
@@ -101,4 +101,4 @@ Validation: 471 tests passed, one Windows symlink-privilege skip; independent re
 findings fixed and rechecked; 214 native Qt captures; clean clone wheel/sdist and RU/EN
 startup. Scaling was exercised through Qt factors, not by changing Windows display DPI.
 No real inference, paid credits, installer or GitHub Release. Stage 11 stays separate.
-This branch awaits owner approval before publication.
+The owner approved source publication subject to successful CI.

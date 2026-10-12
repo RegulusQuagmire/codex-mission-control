@@ -1,9 +1,8 @@
 # Codex Mission Control
 
-This branch prepares Stage 12 **Concept C Evolution**: an action-first Dashboard,
+Stage 12 **Concept C Evolution** adds an action-first Dashboard,
 Router inspection, mission search and explicit quota freshness.
 See [changes, validation and before/after captures](docs/STAGE12.md).
-Publication to public main awaits owner approval.
 
 [Русский](README.md) | **English**
 
@@ -13,13 +12,14 @@ An open-source command center for Codex workflows.
 for managing your own Codex missions, selecting models, monitoring available
 limits, and reviewing generated project changes before execution.
 
-This source snapshot includes completed development stages 1–10. Graceful
+This source snapshot includes completed development stages 1–10, RU/EN localization
+and the Concept C Evolution interface (stage 12). Graceful
 Pause & Resume (stage 11) is still in development and is excluded. The first
 public version is 0.7.0; earlier private version numbers did not indicate public maturity.
 
 ## Screenshots
 
-![Actual English Windows UI with offline demonstration data](docs/images/localization/en-dark-dashboard.png)
+![Actual English Windows UI with offline demonstration data](docs/images/stage12/en-light-dashboard.png)
 
 See [the screenshot gallery](docs/SCREENSHOTS.md). Images show the actual Qt
 application with explicitly labelled offline demonstration data. They are not
