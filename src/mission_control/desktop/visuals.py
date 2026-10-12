@@ -20,7 +20,7 @@ def alpha(value,amount):
 class MissionBackdrop(QWidget):
     def paintEvent(self,event):
         p=tokens();painter=QPainter(self);painter.fillRect(self.rect(),QColor(p['bg']))
-        for x,y,r,amount in ((.45,.32,450,.12),(.92,.02,330,.08)):
+        for x,y,r,amount in ((.92,.02,330,.025),):
             gradient=QRadialGradient(self.width()*x,self.height()*y,r)
             gradient.setColorAt(0,alpha(p['accent'],amount));gradient.setColorAt(1,alpha(p['accent'],0))
             painter.fillRect(self.rect(),gradient)
