@@ -1,47 +1,54 @@
 # Codex Mission Control
 
-An open-source command center for Codex workflows.
+**Русский** | [English](README.en.md)
 
-**v0.7.0 — Public Alpha / Early Development.** A Windows desktop application
-for managing your own Codex missions, selecting models, monitoring available
-limits, and reviewing generated project changes before execution.
+Открытый центр управления задачами Codex.
 
-This source snapshot includes completed development stages 1–10. Graceful
-Pause & Resume (stage 11) is still in development and is excluded. The first
-public version is 0.7.0; earlier private version numbers did not indicate public maturity.
+**v0.7.0 — Public Alpha / ранняя разработка.** Приложение для Windows,
+которое помогает управлять задачами Codex, выбирать модели, следить за доступными
+лимитами и проверять изменения проекта перед запуском сгенерированного кода.
 
-## Screenshots
+В публичную версию входят завершённые этапы разработки 1–10. Приостановка и
+возобновление задач (Graceful Pause & Resume, этап 11) ещё разрабатываются и в
+поставку не включены. Первая публичная версия — 0.7.0; прежние внутренние номера
+версий не отражали готовность продукта к публичному использованию.
 
-![Actual Windows UI with offline demonstration data](docs/images/dashboard.png)
+## Скриншоты
 
-See [the screenshot gallery](docs/SCREENSHOTS.md). Images show the actual Qt
-application with explicitly labelled offline demonstration data. They are not
-evidence of live inference, account connectivity, or performance.
+![Интерфейс Windows с демонстрационными данными без подключения к сервису](docs/images/dashboard.png)
 
-## Features
+Смотрите [галерею скриншотов](docs/SCREENSHOTS.md) (на английском). На изображениях —
+настоящее приложение Qt с явно отмеченными демонстрационными данными.
+Они не подтверждают выполнение реальных запросов к модели, подключение аккаунта
+или показатели производительности.
 
-- Smart Model Router with economy, balanced and quality strategies, supported
-  reasoning levels and bounded escalation after validated quality failures.
-- Model Policy: disable individual models and limit their reasoning effort.
-- Durable Mission Queue with dependencies, priorities and recovery checks.
-- Five-hour and weekly limit tracking when the server supplies that information.
-- Credit policies and separate quota reserves. Paid continuation is unsupported;
-  client-side gates cannot guarantee that no credits will be charged.
-- Managed sessions that reconcile uncertain outcomes rather than blindly replaying work.
-- Security approvals and isolated result review before running new project code.
-- Native Windows desktop, compact overlay and local observation-based analytics.
-- SQLite storage protected with Windows DPAPI and password-encrypted portable summaries.
+## Возможности
 
-The controller operates locally. Sending a mission invokes the separately installed
-Codex service and can consume your account's limits. There are no automatic purchases,
-credit resets, subscription changes or cloud infrastructure operated by this project.
+- Smart Model Router: экономичная, сбалансированная и качественная стратегии,
+  поддерживаемые уровни reasoning и ограниченное повышение модели после
+  подтверждённых ошибок качества.
+- Политика моделей: отключение отдельных моделей и ограничение reasoning effort.
+- Сохраняемая очередь задач с зависимостями, приоритетами и проверками восстановления.
+- Отслеживание пятичасовых и недельных лимитов, если сервер предоставляет эти данные.
+- Политики кредитов и отдельные резервы квоты. Платное продолжение не поддерживается;
+  проверки на стороне клиента не гарантируют отсутствие списаний кредитов.
+- Управляемые сессии: сверка неопределённых результатов перед повторным выполнением.
+- Подтверждения безопасности и отдельная проверка результата перед запуском нового кода.
+- Нативное приложение Windows, компактный оверлей и локальная аналитика наблюдений.
+- Хранение в SQLite с защитой Windows DPAPI и переносимые сводки с шифрованием паролем.
 
-## Installation
+Контроллер работает локально. Отправка задачи обращается к отдельно установленному
+сервису Codex и может расходовать лимиты вашего аккаунта. Проект не выполняет
+автоматические покупки, сбросы кредитов или смену подписки и не использует собственную
+облачную инфраструктуру.
 
-Source installation only for this alpha. No public installer or GitHub Release is provided.
-Use Windows 10 version 2004 or later / Windows 11, 64-bit Python 3.12+, Git, and a
-separately installed Codex CLI with App Server support. Authenticate Codex yourself
-with its supported login flow. The interface is currently primarily Russian.
+## Установка
+
+В этой альфа-версии доступна только установка из исходников. Публичного установщика
+и GitHub Release пока нет. Требуются Windows 10 версии 2004 или новее / Windows 11,
+64-разрядный Python 3.12+, Git и отдельно установленный Codex CLI с поддержкой
+App Server. Войдите в Codex самостоятельно через поддерживаемый им способ входа.
+Интерфейс приложения сейчас преимущественно на русском языке.
 
 ```powershell
 git clone https://github.com/RegulusQuagmire/codex-mission-control.git
@@ -51,67 +58,75 @@ python -m venv .venv
 .\.venv\Scripts\mission-control-desktop.exe
 ```
 
-Use an installed Python executable if the Windows Store alias is unavailable.
-Do not put credentials in this repository. No API key is required by the controller;
-authentication is handled by your Codex installation. App Server compatibility may
-change between Codex versions; connectivity checks do not prove inference availability.
+Если псевдоним Python из Windows Store недоступен, укажите путь к установленному
+интерпретатору. Не сохраняйте учётные данные в репозитории. Контроллеру не нужен
+API-ключ: авторизацией управляет установленный Codex. Совместимость App Server
+может меняться между версиями Codex; проверка подключения не подтверждает
+доступность выполнения запросов к модели.
 
-## Getting started
+## Первый запуск
 
-1. Install from source and launch the desktop application.
-2. Use the setup flow to locate Codex and check its connection.
-3. Choose a project directory and explicitly grant the required local access.
-4. Create a mission and choose a routing strategy or allowed manual model.
-5. Review quota reserves, credit policy and security settings before starting.
-6. Start the mission. This step can consume Codex limits.
-7. Inspect its result and validation evidence; approve execution only after review.
+1. Установите приложение из исходников и запустите его.
+2. В мастере настройки укажите Codex и проверьте подключение.
+3. Выберите каталог проекта и явно предоставьте необходимый локальный доступ.
+4. Создайте задачу и выберите стратегию маршрутизации или разрешённую модель вручную.
+5. Проверьте резервы квоты, политику кредитов и настройки безопасности.
+6. Запустите задачу. Этот шаг может расходовать лимиты Codex.
+7. Изучите результат и подтверждения проверок; разрешайте запуск кода после просмотра.
 
-See [the desktop guide](docs/DESKTOP.md) and [mission queue guide](docs/MISSION_QUEUE.md).
+Подробнее: [руководство по приложению](docs/DESKTOP.md) и
+[руководство по очереди задач](docs/MISSION_QUEUE.md).
 
-## How it works
+## Как это работает
 
-PySide6 presents the desktop UI. An asynchronous bridge calls the queue, router,
-limit manager and safety checks. The adapter communicates with Codex App Server
-over stdio JSON-RPC. Codex owns authentication and its own thread history; this
-application stores local mission state and validation evidence.
+Интерфейс построен на PySide6. Асинхронный мост обращается к очереди, маршрутизатору,
+менеджеру лимитов и проверкам безопасности. Адаптер взаимодействует с Codex App Server
+через stdio JSON-RPC. Codex управляет авторизацией и собственной историей потоков;
+приложение хранит локальное состояние задач и результаты проверок.
 
-See [architecture](ARCHITECTURE.md) and [security](SECURITY.md).
+Подробнее: [архитектура](ARCHITECTURE.md) и [безопасность](SECURITY.md)
+(на английском).
 
-## Security and limitations
+## Безопасность и ограничения
 
-DPAPI protects selected persisted data for the current Windows user; it does not
-protect an unlocked session or a compromised user account. Runtime journals and
-project files can contain private prompts and results. Keep them out of Git.
-There is no OS sandbox and no guarantee of safe execution of untrusted code.
-Approvals, directory checks and recovery checkpoints have limited scopes.
-Do not control the same Codex thread concurrently from another client.
+DPAPI защищает отдельные сохраняемые данные для текущего пользователя Windows,
+но не защищает разблокированную сессию или скомпрометированный аккаунт.
+Рабочие журналы и файлы проектов могут содержать частные запросы и результаты.
+Не добавляйте их в Git. Песочницы на уровне ОС нет; безопасное выполнение
+недоверенного кода не гарантируется. Подтверждения, проверки каталогов и точки
+восстановления имеют ограниченную область действия. Не управляйте одним потоком
+Codex одновременно из другого клиента.
 
-Unknown or exhausted applicable limits block new submissions. Already running
-turns are not stopped by the stage-10 credit gate. Quota cost per task and savings
-percentages are not known. [Security details](docs/SECURITY_HARDENING.md).
+Неизвестные или исчерпанные применимые лимиты блокируют отправку новых задач.
+Проверка кредитов из этапа 10 не останавливает уже запущенные запросы.
+Стоимость задачи в единицах квоты и процент экономии неизвестны.
+Подробнее — [усиление безопасности](docs/SECURITY_HARDENING.md).
 
-## Roadmap
+## Планы развития
 
-See [ROADMAP.md](ROADMAP.md). Pause/resume, visual improvements, routing upgrades
-and project orchestration are future work; they are not features of this alpha.
+Смотрите [ROADMAP.md](ROADMAP.md) (на английском). Приостановка и возобновление,
+улучшения интерфейса и маршрутизации, а также оркестрация проектов относятся
+к будущим работам и не входят в возможности этой альфа-версии.
 
-## Development and contributing
+## Разработка и участие
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -e ".[desktop,dev]"
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-The automated suite uses local fakes and does not require Codex authentication
-or inference. Read [testing](docs/TESTING.md), [building](docs/BUILDING.md),
-[CONTRIBUTING.md](CONTRIBUTING.md) and [CHANGELOG.md](CHANGELOG.md).
+Автоматические тесты используют локальные имитации сервисов и не требуют
+авторизации Codex или реальных запросов к модели. Документы на английском:
+[тестирование](docs/TESTING.md), [сборка](docs/BUILDING.md),
+[участие в разработке](CONTRIBUTING.md) и [история изменений](CHANGELOG.md).
 
-## License
+## Лицензия
 
-Original project code is licensed under the [MIT License](LICENSE).
-Dependencies retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Собственный код проекта распространяется под [лицензией MIT](LICENSE).
+Зависимости сохраняют свои лицензии; см. [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## Disclaimer
+## Статус проекта
 
-An independent, unofficial project. It is not developed, endorsed, supported by,
-or affiliated with OpenAI. Codex and OpenAI names identify the external service.
+Это независимый неофициальный проект. Он не разрабатывается, не одобряется
+и не поддерживается OpenAI и не связан с компанией. Названия Codex и OpenAI
+используются для обозначения внешнего сервиса.
