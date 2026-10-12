@@ -126,7 +126,7 @@ class RouterNetwork(QWidget):
         if visible_models:
             count=len(visible_models)
             for index,model in enumerate(visible_models):
-                y=h*.48 if count==1 else h*(.10+.64*index/(count-1))
+                y=h*.48 if count==1 else h*(.13+.60*index/(count-1))
                 point=QPointF(w*(.82 if index==0 else .75),y);chosen=model['model']==self.selected
                 self._targets.append((model['model'],QRectF(point.x()-36,point.y()-36,72,108)))
                 self.link(painter,core,point,chosen);self.node(painter,point,29,model['model'],chosen)

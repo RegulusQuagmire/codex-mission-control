@@ -61,3 +61,10 @@ def test_stage12_responsive_columns(app):
     columns.resize(1100,400);app.processEvents()
     assert columns.box.direction()==QBoxLayout.LeftToRight
     columns.close()
+
+
+def test_stage12_duplicate_catalog_id_never_claims_availability():
+    from mission_control.desktop.presentation import model_facts
+    data=empty();model={'model':'duplicate','supportedReasoningEfforts':[{'reasoningEffort':'low'}]}
+    data['models']=[model,deepcopy(model)]
+    assert all(not fact['available'] for fact in model_facts(data))

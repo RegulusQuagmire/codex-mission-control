@@ -93,10 +93,10 @@ def enum_label(value):
     return tr({'dark':'Тёмная','light':'Светлая','economy':'Экономичная',
                'balanced':'Сбалансированная','quality':'Качественная','manual':'Вручную',
                'weekly':'Недельный резерв','reserve':'Резерв обоих окон','stop':'Ожидание при исчерпании',
-               'minimal':'Минимальный','low':'Низкий','medium':'Средний','high':'Высокий',
+               'none':'Без рассуждения','minimal':'Минимальный','low':'Низкий','medium':'Средний','high':'Высокий',
                'xhigh':'Очень высокий','max':'Максимальный','ultra':'Предельный','critical':'Критический'}.get(value, value)) if value in {
                'dark','light','economy','balanced','quality','manual','weekly','reserve','stop',
-               'minimal','low','medium','high','xhigh','max','ultra','critical'} else value
+               'none','minimal','low','medium','high','xhigh','max','ultra','critical'} else value
 
 
 def message_text(value):

@@ -1,6 +1,7 @@
 """Read-only presentation of existing snapshots; no dispatch or policy changes."""
 import math
 import time
+from collections import Counter
 from .i18n import tr, message_text, join_text, enum_label
 from .widgets import STATUS, format_time
 from ..model_policy import allowed_efforts
@@ -47,10 +48,12 @@ def model_facts(data):
     active=active_mission(data) or {};decision=active.get('live',{}).get('decision') or active.get('model') or {}
     selected=decision.get('model');manual=active.get('mode')=='manual' or bool(active.get('manual'))
     policies=data.get('preferences',{}).get('modelPolicies',{});facts=[]
+    counts=Counter(model['model'] for model in data.get('models',[]))
     for model in data.get('models',[]):
         identity=model['model'];supported=[x['reasoningEffort'] for x in model.get('supportedReasoningEfforts',[])]
         efforts=allowed_efforts(identity,supported,automatic=not manual,policy=policies)
         notes=[]
+        if counts[identity]!=1:notes.append(tr('ID неоднозначен в текущем каталоге'))
         if model.get('hidden'):notes.append(tr('Модель скрыта текущим каталогом'))
         if 'inputModalities' in model and 'text' not in model['inputModalities']:notes.append(tr('Текстовый ввод не поддерживается'))
         rule=policies.get(identity)
@@ -58,7 +61,7 @@ def model_facts(data):
             notes.append(tr('Предел рассуждения: {effort}',effort=enum_label(rule['maxEffort'])))
             if not rule['automaticEnabled']:notes.append(tr('Автовыбор отключён владельцем'))
         if not efforts:notes.append(tr('Нет разрешённых уровней рассуждения для текущего режима'))
-        available=not model.get('hidden') and ('inputModalities' not in model or 'text' in model['inputModalities']) and bool(efforts)
+        available=counts[identity]==1 and not model.get('hidden') and ('inputModalities' not in model or 'text' in model['inputModalities']) and bool(efforts)
         chosen=identity==selected
         if chosen:notes.append(message_text(decision.get('reason') or tr('Причина выбора не сохранена')))
         elif available:notes.append(tr('Причина отказа от этой альтернативы не сохранена'))

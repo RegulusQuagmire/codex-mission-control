@@ -6,6 +6,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 from ..safety import fingerprint
 from .widgets import label,button,plain,row,STATUS
+from .components import StateBanner
+from .presentation import mission_details
 
 
 WARNING=tr('После подтверждения код может выполняться с правами вашего пользователя Windows. Полноценная изоляция ОС пока отсутствует.')
@@ -144,12 +146,16 @@ class ApprovalsPage(QWidget):
         layout=QVBoxLayout(self);layout.setContentsMargins(0,0,0,0);layout.setSpacing(16)
         layout.addWidget(label(tr('Контроль подтверждений'),'title'))
         self.attention=label(tr('Нет миссий, требующих разбора'),'section');layout.addWidget(self.attention)
+        self.review_state=StateBanner();self.review_state.set_state({'title':tr('Просмотр перед выполнением'),
+            'detail':tr('Сначала выберите результат. Подтверждение относится к конкретной версии файлов.'),'severity':'warning'})
+        layout.addWidget(self.review_state)
         risk=label(WARNING,'warning');risk.setProperty('fluentSeverity','warning');layout.addWidget(risk)
         self.list=QListWidget();self.list.setAccessibleName(tr('Миссии, требующие подтверждения или разбора'));layout.addWidget(self.list,1)
         self.empty_state=label(tr('Подтверждений пока нет\nКогда результат будет готов, здесь появится миссия для просмотра файлов, команд и рисков.'),'section');self.empty_state.setAlignment(Qt.AlignCenter);layout.addWidget(self.empty_state,1)
         self.review_button=button(tr('Просмотреть результат'),self.review,True);self.inspect_button=button(tr('Результат и журнал'),self.inspect)
         layout.addLayout(row(self.review_button,self.inspect_button))
         self.selection_hint=label(tr('Выберите миссию для просмотра'),'muted');layout.addWidget(self.selection_hint)
+        self.selection_detail=label('','muted');layout.addWidget(self.selection_detail)
         self.list.currentRowChanged.connect(self.update_actions)
         layout.addWidget(label(tr('Каждое подтверждение связано с конкретной версией файлов. Изменение файла требует нового просмотра. Массовое подтверждение отсутствует.'),'muted'))
         self.update_actions()
@@ -165,6 +171,7 @@ class ApprovalsPage(QWidget):
     def update_actions(self,*_):
         job=self.selected();waiting=bool(job and job['status']=='waiting_approval')
         self.review_button.setEnabled(waiting);self.inspect_button.setEnabled(bool(job))
+        set_text(self.selection_detail,'setText',mission_details(job,self.jobs))
         set_text(self.selection_hint, 'setText', tr('Просмотрите файлы и команды перед разрешением выполнения этой версии.') if waiting else tr('Изучите результат и журнал, чтобы определить дальнейшее действие.') if job else tr('Выберите миссию для просмотра'))
     def selected(self):
         i=self.list.currentRow();return self.jobs[i] if 0<=i<len(self.jobs) else None

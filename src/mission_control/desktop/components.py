@@ -47,3 +47,19 @@ class MetricStrip(QFrame):
         for column,(key,title) in enumerate(items):
             value=label('0','metric');self.values[key]=value
             grid.addWidget(value,0,column);grid.addWidget(label(title,'muted'),1,column);grid.setColumnStretch(column,1)
+
+
+class ActionStrip(QWidget):
+    """Keep actions visible; wrap to three columns without cloning handlers."""
+    def __init__(self,controls,parent=None):
+        super().__init__(parent);self.controls=controls;self.columns=0
+        self.grid=QGridLayout(self);self.grid.setContentsMargins(0,0,0,0);self.grid.setSpacing(8)
+        self.reflow(3)
+    def reflow(self,columns):
+        if self.columns==columns:return
+        while self.grid.count():self.grid.takeAt(0)
+        for index,control in enumerate(self.controls):self.grid.addWidget(control,index//columns,index%columns,alignment=__import__('PySide6.QtCore',fromlist=['Qt']).Qt.AlignLeft)
+        self.columns=columns
+    def resizeEvent(self,event):
+        self.reflow(6 if self.width()>=1050 else 3)
+        super().resizeEvent(event)

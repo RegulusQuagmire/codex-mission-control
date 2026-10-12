@@ -4,6 +4,8 @@ from .localized_widgets import QWidget, QComboBox, QTableWidget, QTableWidgetIte
 from collections import Counter
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QHeaderView, QAbstractItemView
 from .widgets import label,button,row,plain,panel,limits_text,duration,format_time,STATUS
+from .components import MetricStrip,severity
+from .presentation import quota_freshness,active_mission
 
 
 POLICIES=[('balanced',tr('Баланс — ожидание доступности')),('weekly',tr('Сохранить недельный резерв (85%)')),
@@ -20,6 +22,8 @@ class LimitsPage(QWidget):
             frame,body=panel(title);value=label(tr('Нет данных'),'section');body.addWidget(value)
             self.window_labels[kind]=value;windows.addWidget(frame,1)
         layout.addLayout(windows)
+        self.freshness=label('','muted');layout.addWidget(self.freshness)
+        self.pause_state=label('','section');layout.addWidget(self.pause_state)
         self.availability=label(tr('Доступность не подтверждена: нет наблюдений Codex.'),'muted');layout.addWidget(self.availability)
         self.credits=label(tr('Кредиты: нет данных'),'muted');layout.addWidget(self.credits)
         policy_frame,policy_layout=panel(tr('Политика новых миссий'))
@@ -32,6 +36,10 @@ class LimitsPage(QWidget):
         layout.addWidget(label(tr('Наблюдения и причины ожидания'),'section'))
         self.detail=plain();self.detail.setAccessibleName(tr('Подробные наблюдения лимитов'));layout.addWidget(self.detail,1)
     def update_data(self,data):
+        freshness,level=quota_freshness(data);set_text(self.freshness,'setText',freshness);severity(self.freshness,level)
+        active=active_mission(data) or {};stage=active.get('live',{}).get('stage') or active.get('status','')
+        pause=tr('Очередь на паузе') if data.get('paused') else STATUS.get(stage,tr('Нет активного ожидания')) if stage.startswith('waiting_') else tr('Очередь работает по сохранённым разрешениям')
+        set_text(self.pause_state,'setText',pause)
         active=next((j for j in data['missions'] if j['id']==data['active']),None)
         live=(active or {}).get('live',{})
         for kind,value in self.window_labels.items():
@@ -63,10 +71,8 @@ class AnalyticsPage(QWidget):
         super().__init__();layout=QVBoxLayout(self);layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(16);layout.addWidget(label(tr('Аналитика миссий'),'title'))
         layout.addWidget(label(tr('Только сохранённые факты. Точная стоимость и экономия токенов недоступны.'),'muted'))
-        metrics=QHBoxLayout();self.metrics={}
-        for key,title in [('missions',tr('Всего миссий')),('completed',tr('Завершено')),('attempts',tr('Попыток')),('attention',tr('Требуют разбора'))]:
-            frame,body=panel(title);value=label('0','title');body.addWidget(value);self.metrics[key]=value;metrics.addWidget(frame,1)
-        layout.addLayout(metrics)
+        metrics=MetricStrip([('missions',tr('Всего миссий')),('completed',tr('Завершено')),('attempts',tr('Попыток')),('attention',tr('Требуют разбора'))])
+        self.metrics=metrics.values;layout.addWidget(metrics)
         self.validation_summary=label(tr('Проверок пока нет'),'muted');layout.addWidget(self.validation_summary)
         layout.addWidget(label(tr('Распределение моделей · фактические попытки'),'section'))
         self.model_distribution=QTableWidget(0,2);self.model_distribution.setHorizontalHeaderLabels([tr('Модель'),tr('Попытки')])

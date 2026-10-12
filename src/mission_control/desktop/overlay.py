@@ -4,6 +4,8 @@ from PySide6.QtCore import Qt,QPoint,Signal,QAbstractAnimation
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 from .widgets import label,button,limits_text,STATUS
 from .visuals import MissionBackdrop,RouterNetwork,animation
+from .presentation import quota_freshness,control_state
+from .components import severity
 
 
 class MissionOverlay(MissionBackdrop):
@@ -19,6 +21,7 @@ class MissionOverlay(MissionBackdrop):
         self.header.mousePressEvent=self.drag_start;self.header.mouseMoveEvent=self.drag_move;self.header.mouseReleaseEvent=self.drag_end
         layout.addLayout(self.header_row())
         self.summary=label(tr('Нет активной миссии'));layout.addWidget(self.summary)
+        self.control_status=label('','section');layout.addWidget(self.control_status)
         self.network=RouterNetwork(compact=True);layout.addWidget(self.network)
         self.disclosure=animation(self.network,b'maximumHeight',130,130,240)
         self.disclosure.valueChanged.connect(lambda _:self.adjustSize())
@@ -61,6 +64,7 @@ class MissionOverlay(MissionBackdrop):
         visible=self.isVisible();self.setWindowFlag(Qt.WindowStaysOnTopHint,value)
         if visible:self.show()
     def update_data(self,data):
+        state=control_state(data);set_text(self.control_status,'setText',state['title']);severity(self.control_status,state['severity'])
         self.set_reduced_motion(data['preferences'].get('reducedMotion',False));self.network.set_snapshot(data)
         if not self._restored:
             self.compact=bool(data['preferences'].get('overlayCompact',False));self._restored=True
@@ -74,7 +78,8 @@ class MissionOverlay(MissionBackdrop):
             state=STATUS.get(live.get('stage') or active['status'],live.get('stage') or active['status'])
             set_text(self.summary, 'setText', state + '\n' + active['title'] + '\n' + decision.get('model', tr('Модель не выбрана')) + ' / ' + enum_label(decision.get('effort','—')))
         else:set_text(self.summary, 'setText', state + tr(' · Нет активной миссии'))
-        set_text(self.details, 'setText', limits_text(data['limits']) + tr('\n\nДалее: ') + (next_job['title'] if next_job else tr('Очередь пуста')) + tr('\nТолько миссии Mission Control'))
+        freshness,_=quota_freshness(data)
+        set_text(self.details, 'setText', limits_text(data['limits'])+'\n\n'+freshness + tr('\n\nДалее: ') + (next_job['title'] if next_job else tr('Очередь пуста')) + tr('\nТолько миссии Mission Control'))
         needs=sum(j['status']=='waiting_approval' for j in jobs)
         set_text(self.approval, 'setText', format_text([tr('Требуется просмотр: '), format_value(needs, -1, ''), tr('. Код не исполняется без согласия.')]) if needs else '')
         self.approval.setVisible(bool(needs))

@@ -5,8 +5,9 @@ import json
 from pathlib import Path
 import uuid
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QVBoxLayout, QDialogButtonBox, QHeaderView, QAbstractItemView, QInputDialog, QScrollArea
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QDialogButtonBox, QHeaderView, QAbstractItemView, QInputDialog, QScrollArea
 from .widgets import label,button,row,plain,STATUS,duration
+from .presentation import mission_details
 
 
 class CommandDialog(QDialog):
@@ -147,7 +148,17 @@ class MissionsPage(QWidget):
         self.pause_button=button(tr('Пауза'),lambda:self.control('pause'))
         self.resume_button=button(tr('Продолжить'),lambda:self.control('resume'))
         self.cancel_button=button(tr('Отменить'),self.cancel)
+        self.cancel_button.setProperty('fluentAppearance','danger')
         layout.addLayout(row(self.add_button,self.edit_button,self.access_button))
+        self.search=QLineEdit();self.search.setPlaceholderText(tr('Поиск по названию, ID или проекту'))
+        self.search.setAccessibleName(tr('Поиск по названию, ID или проекту'))
+        self.status_filter=QComboBox();self.status_filter.addItem(tr('Все состояния'),'all')
+        for status in ('pending','running','paused','waiting_approval','waiting_limit','waiting_credit','waiting_network','needs_attention','failed','completed','cancelled'):
+            self.status_filter.addItem(STATUS[status],status)
+        self.status_filter.setAccessibleName(tr('Все состояния'))
+        filters=QHBoxLayout();filters.addWidget(self.search,1);filters.addWidget(self.status_filter);layout.addLayout(filters)
+        self.filter_count=label('','muted');layout.addWidget(self.filter_count)
+        self.search.textChanged.connect(self.refilter);self.status_filter.currentIndexChanged.connect(self.refilter)
         self.table=QTableWidget(0,7);self.table.setHorizontalHeaderLabels([tr('Задание'),tr('Статус'),tr('Приоритет'),tr('Модель'),tr('Время'),tr('Попытки'),tr('Зависимости')])
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows);self.table.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers);self.table.verticalHeader().hide()
@@ -165,20 +176,33 @@ class MissionsPage(QWidget):
         layout.addLayout(row(self.result_button,self.retry_button))
         layout.addWidget(self.ack_button)
         self.summary=label(tr('Выберите задание'),'muted');layout.addWidget(self.summary);self.update_actions()
+        self.selection_detail=plain();self.selection_detail.setMaximumHeight(140);self.selection_detail.setMinimumHeight(88)
+        self.selection_detail.setAccessibleName(tr('Выбранная миссия'));layout.addWidget(self.selection_detail)
+    def refilter(self,*_):
+        if self.data:self.update_data(self.data)
+    def resizeEvent(self,event):
+        super().resizeEvent(event)
+        for column in (4,5,6):self.table.setColumnHidden(column,self.width()<900)
     def selected(self):
         index=self.table.currentRow();return self.jobs[index] if 0<=index<len(self.jobs) else None
     def update_data(self,data):
-        identity=(self.selected() or {}).get('id');self.data=data;self.jobs=data['missions']
+        identity=(self.selected() or {}).get('id');self.data=data
+        query=self.search.text().casefold();status=self.status_filter.currentData()
+        self.jobs=[j for j in data['missions'] if (status=='all' or j['status']==status) and
+            (not query or query in ' '.join(str(j.get(key,'')) for key in ('title','id','project')).casefold())]
+        set_text(self.filter_count,'setText',tr('Показано {shown} из {total}',shown=len(self.jobs),total=len(data['missions'])))
+        set_text(self.empty_state,'setText',tr('Нет совпадений · измените поиск или фильтр') if data['missions'] else tr('Начните с новой миссии\nОпишите результат, выберите проект и проверки. После просмотра разрешений миссия будет готова к запуску.'))
         self.empty_state.setVisible(not self.jobs)
         self.table.setVisible(bool(self.jobs))
         set_text(self.queue_state, 'setText', format_text([tr('Миссий: '), format_value(len(self.jobs), -1, ''), tr(' · активная: ')]) + (tr('есть') if data.get('active') else tr('нет')) + (tr(' · очередь на паузе') if data.get('paused') else '') if self.jobs else tr('Очередь пуста · добавьте первую миссию'))
         self.table.blockSignals(True);self.table.setRowCount(len(self.jobs))
+        self.table.clearSelection();self.table.setCurrentCell(-1,-1)
         selected=-1
         for i,j in enumerate(self.jobs):
             if j['id']==identity:selected=i
             decision=j.get('live',{}).get('decision') or j.get('model') or {}
             values=[j['title'],STATUS.get(j['status'],j['status']),display(j['priority']),decision.get('model','—'),duration(j),
-                display(len(j.get('live', {}).get('attempts') or j.get('attempts', []))),join_text(', ', j['dependsOn']) or '—']
+                display(len(j.get('live', {}).get('attempts') or j.get('attempts', []))),join_text(', ', (next((d['title'] for d in data['missions'] if d['id']==identity),identity) for identity in j['dependsOn'])) or '—']
             for col,value in enumerate(values):self.table.setItem(i,col,QTableWidgetItem(value))
         if selected>=0:self.table.selectRow(selected)
         self.table.blockSignals(False);self.update_actions()
@@ -203,8 +227,10 @@ class MissionsPage(QWidget):
             message=job.get('stopReason') or job.get('live',{}).get('stopReason') or (
                 tr('Ожидает завершения: ')+join_text(', ', job['dependsOn']) if job['dependsOn'] else tr('Выберите действие для задания'))
         set_text(self.summary, 'setText', message_text(message))
+        if hasattr(self,'selection_detail'):
+            self.selection_detail.setPlainText(mission_details(job,self.data.get('missions',[])))
     def edit(self,job=None):
-        dialog=MissionDialog(self.jobs,self.data.get('preferences',{}),self.data.get('models',[]),self,existing=job)
+        dialog=MissionDialog(self.data.get('missions',[]),self.data.get('preferences',{}),self.data.get('models',[]),self,existing=job)
         if dialog.exec()==QDialog.Accepted:
             if job:self.bridge.request('edit',identity=job['id'],definition=dialog.definition())
             else:self.bridge.request('add',definition=dialog.definition())

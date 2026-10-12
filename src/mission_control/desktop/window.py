@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QStackedWidget, QApplica
 from .widgets import label,button,panel,row,limits_text,STATUS,duration
 from .theme import apply_theme
 from .visuals import MissionBackdrop,RouterNetwork,MotionButton,QuotaTelemetry
-from .components import StateBanner,ResponsiveColumns,MetricStrip
+from .components import StateBanner,ResponsiveColumns,MetricStrip,ActionStrip
 from .presentation import control_state,quota_freshness
 from .missions import MissionsPage
 from .router import RouterPage
@@ -67,14 +67,14 @@ class MainWindow(QMainWindow):
             self.quota_telemetry.motion.stop();self.quota_telemetry.settle=1.
             self.page_animation.stop();self.page_effect.setOpacity(1.)
             for control in self.findChildren(MotionButton):control.motion.stop();control.hover=0.
-            self.control_banner.motion.stop();self.control_banner.effect.setOpacity(1.)
+            for banner in self.findChildren(StateBanner):banner.motion.stop();banner.effect.setOpacity(1.)
+            for network in self.findChildren(RouterNetwork):network.set_reduced_motion(True)
         if self.integration:self.integration.overlay.set_reduced_motion(value)
 
     def _dashboard(self):
         page=QWidget();page.setMinimumWidth(0)
         layout=QVBoxLayout(page);layout.setContentsMargins(0,4,0,8);layout.setSpacing(14)
         layout.addWidget(label(tr('Центр управления'),'title'))
-        layout.addWidget(label(tr('Состояние, следующий шаг и реальные решения Codex'),'muted'))
         self.control_banner=StateBanner();layout.addWidget(self.control_banner)
         self.run_button=button(tr('Запустить очередь'),lambda:self.bridge.request('start'),True)
         self.pause_button=button(tr('Пауза'),lambda:self.bridge.request('control',action='pause'))
@@ -82,8 +82,10 @@ class MainWindow(QMainWindow):
         self.stop_button=button(tr('Остановить миссию'),self.stop_active)
         self.result_button=button(tr('Открыть результат'),self.open_active_result)
         self.stop_button.setProperty('fluentAppearance','danger')
-        layout.addLayout(row(self.run_button,self.pause_button,self.resume_button))
-        layout.addLayout(row(button(tr('Добавить задачу'),lambda:self.missions.edit()),self.stop_button,self.result_button))
+        layout.addWidget(ActionStrip([self.run_button,self.pause_button,self.resume_button,
+            button(tr('Добавить задачу'),lambda:self.missions.edit()),self.stop_button,self.result_button]))
+        self.urgent_action=button(tr('Открыть подтверждения'),lambda:self.navigation.setCurrentRow(3),True)
+        self.urgent_action.hide();layout.addWidget(self.urgent_action)
         self.queue_metrics=MetricStrip([('pending',tr('В очереди')),('approval',tr('Ждут согласия')),('attention',tr('Требуют внимания'))])
         layout.addWidget(self.queue_metrics)
         active,content=panel(tr('Активная миссия'));content.setSpacing(12)
@@ -144,6 +146,9 @@ class MainWindow(QMainWindow):
         self.quota_telemetry.set_data(data['limits'],data['preferences'].get('reducedMotion',False))
         jobs=data['missions'];active=next((j for j in jobs if j['id']==data['active']),None)
         self.control_banner.set_state(control_state(data))
+        attention=any(j['status'] in {'waiting_approval','needs_attention','failed'} for j in jobs)
+        self.urgent_action.setVisible(attention)
+        self.urgent_action.setText(tr('Открыть подтверждения') if any(j['status']=='waiting_approval' for j in jobs) else tr('Результат и журнал'))
         for key,statuses in [('pending',{'pending'}),('approval',{'waiting_approval'}),('attention',{'failed','needs_attention'})]:
             self.queue_metrics.values[key].setText(str(sum(j['status'] in statuses for j in jobs)))
         fresh,_=quota_freshness(data);set_text(self.dashboard_freshness,'setText',fresh)
@@ -222,4 +227,6 @@ class MainWindow(QMainWindow):
             return
         self.page_animation.stop();self.network.pulse.stop();self.quota_telemetry.motion.stop();self.elapsed_timer.stop();self.control_banner.motion.stop()
         for control in self.findChildren(MotionButton):control.motion.stop()
+        for network in self.findChildren(RouterNetwork):network.pulse.stop()
+        for banner in self.findChildren(StateBanner):banner.motion.stop()
         event.accept()
