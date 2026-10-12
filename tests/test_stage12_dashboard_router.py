@@ -23,3 +23,25 @@ def test_stage12_router_inspection_never_changes_backend_selection(app):
     assert 'actual' in page.inspection.toPlainText()
     assert not bridge.calls
     page.close()
+
+
+def test_stage12_missing_model_inspection_survives_refresh(app):
+    from mission_control.desktop.router import RouterPage
+    bridge=Bridge();page=RouterPage(bridge);data=empty()
+    data['models']=[{'model':'present','supportedReasoningEfforts':[{'reasoningEffort':'low'}]}]
+    data['missions']=[mission(status='running',model={'model':'missing','effort':'low'})];data['active']='a'
+    page.update_data(data);page.inspect_model('missing');page.update_data(data)
+    assert page.network.inspected=='missing'
+    assert page.catalog.currentData()=='missing'
+    assert not page.effort.isEnabled() and not bridge.calls
+    page.close()
+
+
+def test_stage12_manual_active_mode_is_not_balanced(app):
+    from mission_control.desktop.router import RouterPage
+    page=RouterPage(Bridge());data=empty();data['active']='a'
+    data['missions']=[mission(status='running',mode='balanced',manual={'model':'x','effort':'low'})]
+    page.update_data(data)
+    from mission_control.desktop.i18n import enum_label
+    assert str(enum_label('manual')) in page.route_state.title.text()
+    page.close()

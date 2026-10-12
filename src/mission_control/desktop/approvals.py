@@ -142,7 +142,7 @@ class ResultDialog(QDialog):
 
 class ApprovalsPage(QWidget):
     def __init__(self,bridge):
-        super().__init__();self.bridge=bridge;self.jobs=[]
+        super().__init__();self.bridge=bridge;self.jobs=[];self.all_jobs=[]
         layout=QVBoxLayout(self);layout.setContentsMargins(0,0,0,0);layout.setSpacing(16)
         layout.addWidget(label(tr('Контроль подтверждений'),'title'))
         self.attention=label(tr('Нет миссий, требующих разбора'),'section');layout.addWidget(self.attention)
@@ -160,6 +160,7 @@ class ApprovalsPage(QWidget):
         layout.addWidget(label(tr('Каждое подтверждение связано с конкретной версией файлов. Изменение файла требует нового просмотра. Массовое подтверждение отсутствует.'),'muted'))
         self.update_actions()
     def update_data(self,data):
+        self.all_jobs=data['missions']
         previous_id=(self.selected() or {}).get('id');self.jobs=[j for j in data['missions'] if j['status'] in {'waiting_approval','needs_attention','failed'}]
         self.list.blockSignals(True)
         self.list.clear();self.list.addItems([j['title']+' · '+STATUS.get(j['status'],j['status']) for j in self.jobs])
@@ -171,7 +172,7 @@ class ApprovalsPage(QWidget):
     def update_actions(self,*_):
         job=self.selected();waiting=bool(job and job['status']=='waiting_approval')
         self.review_button.setEnabled(waiting);self.inspect_button.setEnabled(bool(job))
-        set_text(self.selection_detail,'setText',mission_details(job,self.jobs))
+        set_text(self.selection_detail,'setText',mission_details(job,self.all_jobs))
         set_text(self.selection_hint, 'setText', tr('Просмотрите файлы и команды перед разрешением выполнения этой версии.') if waiting else tr('Изучите результат и журнал, чтобы определить дальнейшее действие.') if job else tr('Выберите миссию для просмотра'))
     def selected(self):
         i=self.list.currentRow();return self.jobs[i] if 0<=i<len(self.jobs) else None

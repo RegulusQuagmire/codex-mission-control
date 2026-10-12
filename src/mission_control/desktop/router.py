@@ -65,17 +65,21 @@ class RouterPage(QWidget):
         self.network.set_reduced_motion(data['preferences'].get('reducedMotion',False))
         active=active_mission(data) or {};decision=active.get('live',{}).get('decision') or active.get('model') or {}
         fresh,_=quota_freshness(data)
-        self.route_state.set_state({'title':tr('Режим активной миссии: ')+enum_label(active.get('mode',data['preferences'].get('mode','balanced'))),
+        mode='manual' if active.get('manual') else active.get('mode',data['preferences'].get('mode','balanced'))
+        self.route_state.set_state({'title':tr('Режим активной миссии: ')+enum_label(mode),
             'detail':message_text(decision.get('reason') or tr('Причина выбора не сохранена'))+'\n'+fresh,'severity':'info'})
         self.mode.setCurrentIndex(max(0,self.mode.findData(data['preferences'].get('mode','balanced'))))
-        if self.models!=data['models']:
-            previous=self.catalog.currentData();self.models=data['models'];self.catalog.clear()
-            for m in self.models:self.catalog.addItem(m.get('displayName') or m['model'],m['model'])
+        entries=[(f['title'],f['model']) for f in self.facts]
+        if self.models!=data['models'] or entries!=getattr(self,'catalog_entries',None):
+            previous=self.catalog.currentData();self.models=data['models'];self.catalog_entries=entries
+            self.catalog.blockSignals(True);self.catalog.clear()
+            for title,identity in entries:self.catalog.addItem(title,identity)
             index=self.catalog.findData(previous)
             if index>=0:self.catalog.setCurrentIndex(index)
+            self.catalog.blockSignals(False)
             self.update_efforts()
-        self.catalog.setEnabled(bool(self.models))
-        self.effort.setEnabled(bool(self.models and self.effort.count()))
+        self.catalog.setEnabled(bool(entries))
+        self.effort.setEnabled(bool(self.effort.count()))
         if not self.models:set_text(self.model_detail, 'setText', tr('Нет данных о модели. Обновите подключение для загрузки каталога.'))
         self.update_inspection()
         set_text(self.catalog_state, 'setText', format_text([tr('Моделей в текущем каталоге: '), format_value(len(self.models), -1, ''), tr(' · уровни effort получены из Codex')]) if self.models else tr('Нет данных · каталог Codex ещё не получен'))

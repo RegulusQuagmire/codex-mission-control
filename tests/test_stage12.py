@@ -23,3 +23,13 @@ def test_stage12_limits_show_unknown_age_and_pause_reason(app):
     assert 'паузе' in page.pause_state.text()
     assert 'не гарантировано' in page.credits.text()
     page.close()
+
+
+def test_stage12_approvals_resolve_completed_dependencies(app):
+    from mission_control.desktop.approvals import ApprovalsPage
+    page=ApprovalsPage(Bridge());data=empty()
+    data['missions']=[mission('done',status='completed'),mission('review',status='waiting_approval',dependsOn=['done'])]
+    page.update_data(data)
+    assert 'User mission done' in page.selection_detail.text()
+    assert 'не найдена' not in page.selection_detail.text()
+    page.close()
