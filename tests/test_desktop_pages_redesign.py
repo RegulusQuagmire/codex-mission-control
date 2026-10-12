@@ -42,7 +42,7 @@ def test_router_exposes_only_received_catalog_and_supported_efforts(app):
     data['models']=[{'model':'actual','displayName':'Actual model','description':'Observed model',
         'supportedReasoningEfforts':[{'reasoningEffort':'low'}]}]
     page.update_data(data)
-    assert page.catalog.currentData()=='actual' and page.effort.currentText()=='low'
+    assert page.catalog.currentData()=='actual' and page.effort.currentData()=='low'
     assert page.model_detail.text()=='Observed model'
     assert 'Решений пока нет' in page.history.toPlainText()
 

@@ -30,6 +30,9 @@ Issues = "https://github.com/RegulusQuagmire/codex-mission-control/issues"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"mission_control.desktop" = ["translations.json"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

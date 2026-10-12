@@ -14,7 +14,7 @@ public version is 0.7.0; earlier private version numbers did not indicate public
 
 ## Screenshots
 
-![Actual Windows UI with offline demonstration data](docs/images/dashboard.png)
+![Actual English Windows UI with offline demonstration data](docs/images/localization/en-dark-dashboard.png)
 
 See [the screenshot gallery](docs/SCREENSHOTS.md). Images show the actual Qt
 application with explicitly labelled offline demonstration data. They are not
@@ -43,7 +43,10 @@ credit resets, subscription changes or cloud infrastructure operated by this pro
 Source installation only for this alpha. No public installer or GitHub Release is provided.
 Use Windows 10 version 2004 or later / Windows 11, 64-bit Python 3.12+, Git, and a
 separately installed Codex CLI with App Server support. Authenticate Codex yourself
-with its supported login flow. The interface is currently primarily Russian.
+with its supported login flow. The interface supports Russian (default) and English.
+Choose **Settings → Interface language → English** or select English in the first-run
+wizard. The change applies immediately and is saved for subsequent launches.
+See [localization details and screenshots](docs/LOCALIZATION.md#english).
 
 ```powershell
 git clone https://github.com/RegulusQuagmire/codex-mission-control.git

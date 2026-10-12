@@ -4,6 +4,7 @@ import sys
 root = Path(SPECPATH).parent
 notices=[(str(root/'LICENSE'),'.'),(str(root/'THIRD_PARTY_NOTICES.md'),'.'),
          (str(root/'docs/RELEASE.md'),'docs'),(str(root/'packaging/licenses'),'licenses/Qt')]
+notices.append((str(root/'src/mission_control/desktop/translations.json'),'mission_control/desktop'))
 for name in ('PySide6-Essentials','shiboken6','cryptography','cffi','pyinstaller'):
     dist=distribution(name)
     for item in dist.files or []:

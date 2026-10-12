@@ -21,7 +21,7 @@ MAX_PAYLOAD = 8 * 1024 * 1024
 MAX_ARCHIVE = MAX_PAYLOAD + 52
 MAX_RECORDS = 2000
 ITERATIONS = 600_000
-PREFERENCE_ENUMS = {'theme': {'dark', 'light'}, 'mode': {'economy', 'balanced', 'quality'},
+PREFERENCE_ENUMS = {'language': {'ru', 'en'}, 'theme': {'dark', 'light'}, 'mode': {'economy', 'balanced', 'quality'},
                     'policy': {'balanced', 'weekly', 'reserve', 'stop'}}
 PREFERENCE_BOOLS = {'closeToTray', 'notifications', 'reducedMotion', 'overlayCompact', 'overlayPinned', 'overlayCodexOnly'}
 

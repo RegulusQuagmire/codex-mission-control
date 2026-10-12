@@ -262,7 +262,7 @@ def test_limit_policy_defaults_are_real_and_settings_round_trip_intent(app):
     bridge=Bridge();window=MainWindow(bridge,system_integration=False)
     data=empty();bridge.snapshot.emit(data)
     assert 'Нет данных' in window.limits.detail.toPlainText()
-    window.settings.theme.setCurrentText('light');window.settings.save()
+    window.settings.theme.selectData('light');window.settings.save()
     assert bridge.calls[-1][0]=='save_preferences'
     assert bridge.calls[-1][1]['values']['theme']=='light'
     window.close()

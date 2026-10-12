@@ -1,6 +1,8 @@
 """Native policy controls sourced from the actual Codex model catalog."""
+from .i18n import tr, display, join_text, format_text, format_value, enum_label
+from .localized_widgets import QWidget, QFormLayout, QCheckBox, QComboBox, set_text
 from copy import deepcopy
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QCheckBox, QComboBox
+from PySide6.QtWidgets import QVBoxLayout
 
 from .widgets import label, button, row
 from ..model_policy import EFFORT_ORDER, OWNER_PROFILE
@@ -13,15 +15,14 @@ class ModelPolicyEditor(QWidget):
         self._policies = None
         self._catalog = None
         layout = QVBoxLayout(self);layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(label('Политика моделей', 'heading'))
-        layout.addWidget(label('Предел effort действует во всех режимах, включая Manual и продолжение. '
-                               'Переключатель «Автовыбор» влияет только на Router. Уже отправленный ход не отменяется.', 'muted'))
+        layout.addWidget(label(tr('Политика моделей'), 'heading'))
+        layout.addWidget(label(tr('Предел effort действует во всех режимах, включая Manual и продолжение. Переключатель «Автовыбор» влияет только на Router. Уже отправленный ход не отменяется.'), 'muted'))
         self.body = QWidget();self.form = QFormLayout(self.body)
         self.form.setContentsMargins(0, 0, 0, 0);self.form.setSpacing(12)
         layout.addWidget(self.body)
-        self.status = label('Подключите Codex для получения моделей и уровней рассуждения.', 'muted')
+        self.status = label(tr('Подключите Codex для получения моделей и уровней рассуждения.'), 'muted')
         layout.addWidget(self.status)
-        layout.addWidget(button('Профиль: Astra Low · Sol Medium · Luna High', self.apply_profile))
+        layout.addWidget(button(tr('Профиль: Astra Low · Sol Medium · Luna High'), self.apply_profile))
 
     def value(self):
         result = {}
@@ -44,36 +45,35 @@ class ModelPolicyEditor(QWidget):
             entries = [m for m in models if m.get('model') == model]
             entry = entries[0] if len(entries) == 1 and not entries[0].get('hidden') else None
             supported = {x.get('reasoningEffort') for x in entry.get('supportedReasoningEfforts', [])} if entry else set()
-            automatic = QCheckBox('Автовыбор');automatic.setAccessibleName(model + ' · автовыбор')
-            ceiling = QComboBox();ceiling.setAccessibleName(model + ' · максимальный effort')
-            ceiling.addItem('Без личного ограничения', None)
+            automatic = QCheckBox(tr('Автовыбор'));automatic.setAccessibleName(model + tr(' · автовыбор'))
+            ceiling = QComboBox();ceiling.setAccessibleName(model + tr(' · максимальный effort'))
+            ceiling.addItem(tr('Без личного ограничения'), None)
             for effort in EFFORT_ORDER:
-                if effort in supported:ceiling.addItem(effort.capitalize(), effort)
+                if effort in supported:ceiling.addItem(enum_label(effort), effort)
             rule = edited.get(model)
             automatic.setChecked(rule['automaticEnabled'] if rule else True)
             if rule:
                 index = ceiling.findData(rule['maxEffort'])
                 if index < 0:
-                    ceiling.addItem(rule['maxEffort'].capitalize() + ' (сохранённый предел)', rule['maxEffort'])
+                    ceiling.addItem(enum_label(rule['maxEffort']) + tr(' (сохранённый предел)'), rule['maxEffort'])
                     index = ceiling.count() - 1
                 ceiling.setCurrentIndex(index)
-            state = label('Доступна' if entry and supported else 'Недоступна · настройка сохранена', 'muted')
+            state = label(tr('Доступна') if entry and supported else tr('Недоступна · настройка сохранена'), 'muted')
             info = QWidget();info_layout = QVBoxLayout(info);info_layout.setContentsMargins(0,0,0,0)
             info_layout.addWidget(label(model));info_layout.addWidget(state)
             self.form.addRow(info, row(automatic, ceiling))
             self.controls[model] = (automatic, ceiling, state)
-        self.status.setText('Из Codex получено моделей: ' + str(len(models)) +
-                            '. Новые уровни не обходят сохранённый предел. Изменения применяются после «Сохранить».')
+        set_text(self.status, 'setText', tr('Из Codex получено моделей: ') + display(len(models)) + tr('. Новые уровни не обходят сохранённый предел. Изменения применяются после «Сохранить».'))
 
     def apply_profile(self):
         ids = [m.get('model') for m in (self._catalog or [])]
         missing = [model for model in OWNER_PROFILE if ids.count(model) != 1]
         if missing:
-            self.status.setText('Профиль не применён: отсутствуют или неоднозначны ' + ', '.join(missing))
+            set_text(self.status, 'setText', tr('Профиль не применён: отсутствуют или неоднозначны ') + join_text(', ', missing))
             return
         edited = {**self.value(), **deepcopy(OWNER_PROFILE)}
         models = self._catalog;original = self._policies
         self._catalog = None;self._policies = None
         self.update_data(models, edited)
         self._policies = original
-        self.status.setText('Подготовлен профиль для gpt-6-astra / gpt-6.1-sol / gpt-6-luna. Нажмите «Сохранить».')
+        set_text(self.status, 'setText', tr('Подготовлен профиль для gpt-6-astra / gpt-6.1-sol / gpt-6-luna. Нажмите «Сохранить».'))

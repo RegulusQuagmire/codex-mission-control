@@ -1,8 +1,10 @@
 """Lightweight native visuals. Only real snapshots cause bounded motion."""
+from .i18n import tr, display, join_text, format_text, format_value, enum_label, message_text
+from .localized_widgets import QWidget, QPushButton, set_text
 import math
 from PySide6.QtCore import Qt,QPointF,QRectF,Property,QPropertyAnimation,QEasingCurve,QAbstractAnimation
-from PySide6.QtGui import QColor,QPainter,QPen,QRadialGradient,QPainterPath,QFont
-from PySide6.QtWidgets import QWidget,QPushButton,QApplication,QSizePolicy
+from PySide6.QtGui import QColor, QPainter, QPen, QRadialGradient, QPainterPath, QFont
+from PySide6.QtWidgets import QApplication, QSizePolicy
 from .theme import tokens
 
 
@@ -50,10 +52,10 @@ class RouterNetwork(QWidget):
     """The displayed nodes are catalog/decision facts, never illustrative model IDs."""
     def __init__(self,parent=None,compact=False):
         super().__init__(parent);self.compact=compact;self.models=[];self.selected=None;self.reason=''
-        self.phase='Нет активной миссии';self.effort='—';self.active=False;self.reduced_motion=False
+        self.phase=tr('Нет активной миссии');self.effort='—';self.active=False;self.reduced_motion=False
         self._pulse=1.;self._signature=None;self.pulse=animation(self,b'activity',0.,1.,750)
         self.setMinimumSize(280,130 if compact else 330)
-        self.setAccessibleName('Сеть решений Smart Router');self.setToolTip('Модели и решения из Codex. Линии показывают выбранный маршрут.')
+        self.setAccessibleName(tr('Сеть решений Smart Router'));self.setToolTip(tr('Модели и решения из Codex. Линии показывают выбранный маршрут.'))
     def get_activity(self):return self._pulse
     def set_activity(self,value):self._pulse=value;self.update()
     activity=Property(float,get_activity,set_activity)
@@ -63,7 +65,7 @@ class RouterNetwork(QWidget):
     def set_snapshot(self,data):
         active=next((j for j in data.get('missions',[]) if j['id']==data.get('active')),None)
         live=(active or {}).get('live',{});decision=live.get('decision') or (active or {}).get('model') or {}
-        self.selected=decision.get('model');self.effort=decision.get('effort') or '—';self.reason=decision.get('reason') or ''
+        self.selected=decision.get('model');self.effort=decision.get('effort') or '—';self.reason=message_text(decision.get('reason') or '')
         catalog=list(data.get('models',[]));chosen=next((m for m in catalog if m['model']==self.selected),None)
         if self.selected and chosen is None:chosen={'model':self.selected,'displayName':self.selected}
         self.models=([chosen] if chosen else [])+[m for m in catalog if m['model']!=self.selected][:2 if chosen else 3]
@@ -74,12 +76,12 @@ class RouterNetwork(QWidget):
             self._signature=signature
             if self.active and not self.reduced_motion:self.pulse.stop();self.pulse.start()
             else:self.pulse.stop();self.activity=1.
-        self.setToolTip((self.reason or 'Нет сохранённого решения маршрутизатора')+'\n'+ '\n'.join(m.get('displayName') or m['model'] for m in self.models));self.update()
+        self.setToolTip((self.reason or tr('Нет сохранённого решения маршрутизатора'))+'\n'+ join_text('\n', (m.get('displayName') or m['model'] for m in self.models)));self.update()
     def write(self,painter,rect,text,size=13,muted=False):
         font=QFont('Segoe UI');font.setPixelSize(size);painter.setFont(font)
         painter.setPen(QColor(tokens()['muted' if muted else 'text']))
         value=painter.fontMetrics().elidedText(str(text),Qt.ElideMiddle,int(rect.width()))
-        painter.drawText(rect,Qt.AlignCenter,value)
+        painter.drawText(rect,Qt.AlignCenter,str(value))
     def glow(self,painter,point,radius,amount):
         gradient=QRadialGradient(point,radius);gradient.setColorAt(0,alpha(tokens()['accent'],amount));gradient.setColorAt(1,alpha(tokens()['accent'],0))
         painter.setPen(Qt.NoPen);painter.setBrush(gradient);painter.drawEllipse(point,radius,radius)
@@ -102,8 +104,8 @@ class RouterNetwork(QWidget):
             for ring in (radius+21,radius+47):painter.drawEllipse(core,ring,ring)
             for x in range(15,w,38):
                 for y in range(15,h,38):painter.drawPoint(x,y)
-        self.link(painter,origin,core,bool(self.selected));self.node(painter,origin,24,'Задача')
-        self.node(painter,core,radius,'Router',bool(self.selected))
+        self.link(painter,origin,core,bool(self.selected));self.node(painter,origin,24,tr('Задача'))
+        self.node(painter,core,radius,tr('Выбор'),bool(self.selected))
         visible_models=(self.models[:1] if self.selected else []) if self.compact else self.models
         if visible_models:
             count=len(visible_models)
@@ -114,9 +116,9 @@ class RouterNetwork(QWidget):
                 if not self.compact:
                     left=max(0,min(w-184,point.x()-92))
                     self.write(painter,QRectF(left,point.y()+33,184,20),model.get('displayName') or model['model'],12)
-                    self.write(painter,QRectF(left,point.y()+52,184,20),self.effort if chosen else 'В каталоге',12,True)
-        else:self.write(painter,QRectF(w*.60,h*.40,w*.37,50),'Нет решения' if self.compact and not self.selected else 'Каталог не получен',13,True)
-        if not self.compact:self.write(painter,QRectF(core.x()-112,core.y()+radius+12,224,24),'Интеллектуальный выбор',12,True)
+                    self.write(painter,QRectF(left,point.y()+52,184,20),enum_label(self.effort) if chosen else tr('В каталоге'),12,True)
+        else:self.write(painter,QRectF(w*.60,h*.40,w*.37,50),tr('Нет решения') if self.compact and not self.selected else tr('Каталог не получен'),13,True)
+        if not self.compact:self.write(painter,QRectF(core.x()-112,core.y()+radius+12,224,24),tr('Интеллектуальный выбор'),12,True)
 
 class QuotaTelemetry(QWidget):
     """Observed remaining percentages; labels stay exact while bars settle."""
@@ -137,18 +139,18 @@ class QuotaTelemetry(QWidget):
     def paintEvent(self,event):
         from .widgets import format_time
         painter=QPainter(self);painter.setRenderHint(QPainter.Antialiasing);font=QFont('Segoe UI');font.setPixelSize(12);painter.setFont(font)
-        for index,(kind,title) in enumerate((('five_hour','5 часов'),('weekly','Неделя'))):
+        for index,(kind,title) in enumerate((('five_hour',tr('5 часов')),('weekly',tr('Неделя')))):
             y=index*58;w=self.width();items=[item for item in self.windows if item['kind']==kind]
             values=[item for item in items if item.get('remainingPercent') is not None and item.get('usedPercent') is not None]
             valid=bool(values) and len(values)==len(items)
             item=min(values,key=lambda i:i['remainingPercent']) if valid else {}
             remaining=item.get('remainingPercent');used=item.get('usedPercent')
-            painter.setPen(QColor(tokens()['text']));painter.drawText(QRectF(0,y,w,20),Qt.AlignLeft,title+(' · минимум' if len(items)>1 else ''))
-            painter.drawText(QRectF(0,y,w,20),Qt.AlignRight,f'{remaining:g}% осталось' if valid else 'Нет данных')
+            painter.setPen(QColor(tokens()['text']));painter.drawText(QRectF(0,y,w,20),Qt.AlignLeft,str(title + (tr(' · минимум') if len(items) > 1 else '')))
+            painter.drawText(QRectF(0,y,w,20),Qt.AlignRight,str(format_text([format_value(remaining, -1, format_text(['g'])), tr('% осталось')]) if valid else tr('Нет данных')))
             painter.setPen(Qt.NoPen);painter.setBrush(alpha(tokens()['border'],.55));painter.drawRoundedRect(QRectF(0,y+26,w,4),2,2)
             if valid:
                 painter.setBrush(QColor(tokens()['accent']));painter.drawRoundedRect(QRectF(0,y+26,w*max(0,min(100,remaining))/100*self._settle,4),2,2)
             painter.setPen(QColor(tokens()['muted']))
-            painter.drawText(QRectF(0,y+35,w,18),Qt.AlignLeft,f'{used:g}% использовано' if valid else 'Нет наблюдений')
-            when=format_time(item.get('resetsAt'));reset='Сброс неизвестен' if when.startswith('Нет') else 'Сброс '+when
-            painter.drawText(QRectF(w*.48,y+35,w*.52,18),Qt.AlignRight,reset)
+            painter.drawText(QRectF(0,y+35,w,18),Qt.AlignLeft,str(format_text([format_value(used, -1, format_text(['g'])), tr('% использовано')]) if valid else tr('Нет наблюдений')))
+            when=format_time(item.get('resetsAt'));reset=tr('Сброс неизвестен') if item.get('resetsAt') is None else tr('Сброс ')+when
+            painter.drawText(QRectF(w*.48,y+35,w*.52,18),Qt.AlignRight,str(reset))

@@ -1,6 +1,9 @@
-from PySide6.QtWidgets import QSystemTrayIcon,QMenu,QApplication,QStyle,QMessageBox
+from .i18n import tr, display, join_text, format_text, format_value, enum_label
+from .localized_widgets import QMenu, QMessageBox, set_text
+from PySide6.QtWidgets import QSystemTrayIcon, QApplication, QStyle
 from .overlay import MissionOverlay
 from .windows import WindowsIntegration
+from .widgets import STATUS
 
 
 class DesktopIntegration:
@@ -14,11 +17,11 @@ class DesktopIntegration:
         self.native.foreground_changed.connect(self.on_foreground);self.native.warning.connect(window.show_error)
         self.tray=QSystemTrayIcon(window.style().standardIcon(QStyle.SP_ComputerIcon),window)
         self.tray.setToolTip('Codex Mission Control');menu=QMenu(window)
-        menu.addAction('Открыть Mission Control',self.show_main);self.status=menu.addAction('Готово');self.status.setEnabled(False)
-        self.pause_action=menu.addAction('Пауза очереди',lambda:bridge.request('control',action='pause'))
-        self.resume_action=menu.addAction('Продолжить',window.resume_queue)
-        menu.addSeparator();menu.addAction('Показать оверлей',self.show_overlay);menu.addAction('Скрыть оверлей',self.hide_overlay)
-        menu.addSeparator();menu.addAction('Полный выход',self.exit)
+        menu.addAction(tr('Открыть Mission Control'),self.show_main);self.status=menu.addAction(tr('Готово'));self.status.setEnabled(False)
+        self.pause_action=menu.addAction(tr('Пауза очереди'),lambda:bridge.request('control',action='pause'))
+        self.resume_action=menu.addAction(tr('Продолжить'),window.resume_queue)
+        menu.addSeparator();menu.addAction(tr('Показать оверлей'),self.show_overlay);menu.addAction(tr('Скрыть оверлей'),self.hide_overlay)
+        menu.addSeparator();menu.addAction(tr('Полный выход'),self.exit)
         self.tray.setContextMenu(menu);self.tray.activated.connect(lambda reason:self.show_main() if reason==QSystemTrayIcon.DoubleClick else None)
         if QSystemTrayIcon.isSystemTrayAvailable():self.tray.show()
         bridge.stopped.connect(self.finished)
@@ -61,25 +64,25 @@ class DesktopIntegration:
         self.on_foreground(self.foreground)
         self.pause_action.setEnabled(not data['paused']);self.resume_action.setEnabled(self.window.resume_button.isEnabled())
         active=next((j for j in data['missions'] if j['id']==data['active']),None)
-        state='Пауза' if data['paused'] else (active['status'] if active else 'Готово')
-        self.status.setText(state);self.tray.setToolTip('Mission Control · '+state)
+        state=tr('Пауза') if data['paused'] else (STATUS.get(active['status'],active['status']) if active else tr('Готово'))
+        set_text(self.status, 'setText', state);set_text(self.tray,'setToolTip','Mission Control · '+state)
         if prefs.get('notifications',True):
             for job in data['missions']:
                 prior=self.previous.get(job['id']);status=job.get('live',{}).get('stage') or job['status']
-                messages={'completed':'Задание завершено. Результат доступен в приложении.',
-                    'waiting_approval':'Требуется просмотр и подтверждение результата.',
-                    'waiting_limit':'Работа ожидает восстановления лимита.',
-                    'needs_attention':'Требуется ручной разбор состояния.', 'failed':'Проверка задания завершилась ошибкой.'}
+                messages={'completed':tr('Задание завершено. Результат доступен в приложении.'),
+                    'waiting_approval':tr('Требуется просмотр и подтверждение результата.'),
+                    'waiting_limit':tr('Работа ожидает восстановления лимита.'),
+                    'needs_attention':tr('Требуется ручной разбор состояния.'), 'failed':tr('Проверка задания завершилась ошибкой.')}
                 if prior is not None and prior!=status:
-                    if status in messages:self.tray.showMessage('Mission Control',messages[status],QSystemTrayIcon.Information,8000)
-                    elif prior=='waiting_limit' and status=='running':self.tray.showMessage('Mission Control','Доступность восстановлена; работа продолжается.',QSystemTrayIcon.Information,6000)
+                    if status in messages:self.tray.showMessage('Mission Control',str(messages[status]),QSystemTrayIcon.Information,8000)
+                    elif prior=='waiting_limit' and status=='running':self.tray.showMessage('Mission Control',str(tr('Доступность восстановлена; работа продолжается.')),QSystemTrayIcon.Information,6000)
         self.previous={j['id']:j.get('live',{}).get('stage') or j['status'] for j in data['missions']}
     def exit(self):
         if self.closing:return
         if self.window.data.get('workerRunning'):
-            answer=QMessageBox.question(self.window,'Полный выход','Остановить управляемые процессы и сохранить очередь на паузе? Незавершённый запрос потребует восстановления.')
+            answer=QMessageBox.question(self.window,tr('Полный выход'),tr('Остановить управляемые процессы и сохранить очередь на паузе? Незавершённый запрос потребует восстановления.'))
             if answer!=QMessageBox.Yes:return
-        self.closing=True;self.window.banner.setText('Безопасное завершение…')
+        self.closing=True;set_text(self.window.banner, 'setText', tr('Безопасное завершение…'))
         self.window.setEnabled(False);self.native.close();self.overlay.hide()
         if not self.bridge.isRunning():self.finished()
         else:self.bridge.request('shutdown')
@@ -87,5 +90,5 @@ class DesktopIntegration:
         self.native.close();self.overlay.close();self.tray.hide()
         if self.closing:QApplication.instance().quit()
         else:
-            self.window.show_error('Backend остановлен. Очередь не перезапускается автоматически; проверьте состояние и перезапустите приложение.')
+            self.window.show_error(tr('Backend остановлен. Очередь не перезапускается автоматически; проверьте состояние и перезапустите приложение.'))
             self.window.run_button.setEnabled(False);self.show_main()

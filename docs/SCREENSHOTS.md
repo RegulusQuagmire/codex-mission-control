@@ -5,7 +5,9 @@ Windows platform. Every image uses explicitly labelled offline fixtures: the cat
 quota percentages and missions are synthetic. No real account is connected, no backend
 request is sent and no inference or generated-code execution occurs.
 Reproduce with `python tools/capture_public_demo.py docs/images` after installing
-`.[desktop,dev]`. The application UI is currently primarily Russian.
+`.[desktop,dev]`. These original v0.7.0 captures are in Russian.
+The application now supports both Russian and English; see the
+[RU/EN gallery and language settings](LOCALIZATION.md) for current captures.
 
 ## Dashboard
 

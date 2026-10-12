@@ -18,7 +18,7 @@ from ..secure_files import read_file
 from .discovery import resolve_codex, CodexNotFound
 
 
-DEFAULTS = {'theme':'dark','codex':'codex','mode':'balanced','policy':'balanced',
+DEFAULTS = {'language':'ru','theme':'dark','codex':'codex','mode':'balanced','policy':'balanced',
             'maxAttempts':3,'closeToTray':True,'notifications':True,'overlayPinned':True,
             'overlayCodexOnly':False,'hotkey':'Ctrl+Shift+M','setupComplete':False,
             'resumeOnLaunch':False,'overlayX':None,'overlayY':None,'overlayCompact':False,'reducedMotion':False,
@@ -100,6 +100,7 @@ class DesktopService:
 
     @staticmethod
     def _validate_preferences(merged):
+        if merged['language'] not in {'ru','en'}:raise StateError('Invalid UI language')
         from ..credit_policy import CreditPolicy
         try:CreditPolicy(**merged['creditPolicy'])
         except (ValueError,TypeError) as error:raise StateError('Invalid credit policy') from error
