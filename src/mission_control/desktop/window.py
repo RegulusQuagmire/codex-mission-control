@@ -6,6 +6,8 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QStackedWidget, QApplica
 from .widgets import label,button,panel,row,limits_text,STATUS,duration
 from .theme import apply_theme
 from .visuals import MissionBackdrop,RouterNetwork,MotionButton,QuotaTelemetry
+from .components import StateBanner,ResponsiveColumns,MetricStrip
+from .presentation import control_state,quota_freshness
 from .missions import MissionsPage
 from .router import RouterPage
 from .approvals import ApprovalsPage,AccessDialog,ResultApprovalDialog,ResultDialog
@@ -31,7 +33,7 @@ class MainWindow(QMainWindow):
         self.pages=QStackedWidget();outer.addWidget(self.pages,1)
         self.page_effect=QGraphicsOpacityEffect(self.pages);self.pages.setGraphicsEffect(self.page_effect)
         self.page_animation=QPropertyAnimation(self.page_effect,b'opacity',self)
-        self.page_animation.setDuration(200);self.page_animation.setEasingCurve(QEasingCurve.OutCubic)
+        self.page_animation.setDuration(160);self.page_animation.setEasingCurve(QEasingCurve.OutCubic)
         self.navigation.currentRowChanged.connect(self.change_page)
         self._dashboard()
         self.missions=MissionsPage(bridge);self.add_page(tr('Миссии'),self.missions)
@@ -65,40 +67,51 @@ class MainWindow(QMainWindow):
             self.quota_telemetry.motion.stop();self.quota_telemetry.settle=1.
             self.page_animation.stop();self.page_effect.setOpacity(1.)
             for control in self.findChildren(MotionButton):control.motion.stop();control.hover=0.
+            self.control_banner.motion.stop();self.control_banner.effect.setOpacity(1.)
         if self.integration:self.integration.overlay.set_reduced_motion(value)
 
     def _dashboard(self):
-        page=QWidget();page.setMinimumSize(710,620)
+        page=QWidget();page.setMinimumWidth(0)
         layout=QVBoxLayout(page);layout.setContentsMargins(0,4,0,8);layout.setSpacing(14)
+        layout.addWidget(label(tr('Центр управления'),'title'))
+        layout.addWidget(label(tr('Состояние, следующий шаг и реальные решения Codex'),'muted'))
+        self.control_banner=StateBanner();layout.addWidget(self.control_banner)
         self.run_button=button(tr('Запустить очередь'),lambda:self.bridge.request('start'),True)
         self.pause_button=button(tr('Пауза'),lambda:self.bridge.request('control',action='pause'))
         self.resume_button=button(tr('Продолжить'),self.resume_queue)
         self.stop_button=button(tr('Остановить миссию'),self.stop_active)
         self.result_button=button(tr('Открыть результат'),self.open_active_result)
-        body=QHBoxLayout();body.setSpacing(18)
-        universe=QWidget();work=QVBoxLayout(universe);work.setContentsMargins(0,0,0,0);work.setSpacing(10)
-        work.addLayout(row(label(tr('Сеть решений'),'section'),button(tr('Решения Router'),lambda:self.navigation.setCurrentRow(2))))
-        self.network=RouterNetwork();work.addWidget(self.network,1)
-        self.network_state=label(tr('Новая задача → оценка → модель → проверка'),'muted');work.addWidget(self.network_state)
-        work.addLayout(row(self.run_button,self.pause_button,self.resume_button))
-        work.addLayout(row(button(tr('Добавить задачу'),lambda:self.missions.edit()),self.stop_button,self.result_button))
-        body.addWidget(universe,1)
-        active,content=panel(tr('Активная миссия'));active.setFixedWidth(290);content.setSpacing(8)
+        self.stop_button.setProperty('fluentAppearance','danger')
+        layout.addLayout(row(self.run_button,self.pause_button,self.resume_button))
+        layout.addLayout(row(button(tr('Добавить задачу'),lambda:self.missions.edit()),self.stop_button,self.result_button))
+        self.queue_metrics=MetricStrip([('pending',tr('В очереди')),('approval',tr('Ждут согласия')),('attention',tr('Требуют внимания'))])
+        layout.addWidget(self.queue_metrics)
+        active,content=panel(tr('Активная миссия'));content.setSpacing(12)
         self.mission_title=label(tr('Нет активной миссии'),'missionTitle');content.addWidget(self.mission_title)
         self.active_summary=label(tr('Создайте задание, чтобы начать.'),'muted');content.addWidget(self.active_summary)
-        content.addWidget(label(tr('Доступность Codex'),'section'));self.limit_summary=label(tr('5 часов: Нет данных\nНеделя: Нет данных'),'muted');self.limit_summary.hide()
-        self.quota_telemetry=QuotaTelemetry();content.addWidget(self.quota_telemetry)
+        content.addStretch()
+        quotas,quota_layout=panel(tr('Доступность и лимиты'))
+        self.limit_summary=label(tr('5 часов: Нет данных\nНеделя: Нет данных'),'muted');self.limit_summary.hide()
+        self.quota_telemetry=QuotaTelemetry();quota_layout.addWidget(self.quota_telemetry)
+        self.dashboard_freshness=label('','muted');quota_layout.addWidget(self.dashboard_freshness)
         self.review_hint=label(tr('Новый код ждёт вашего согласия. ОС-песочницы нет.'),'warning')
-        content.addWidget(self.review_hint)
-        content.addWidget(button(tr('Открыть подтверждения'),lambda:self.navigation.setCurrentRow(3)));content.addStretch()
-        body.addWidget(active);layout.addLayout(body,1)
+        quota_layout.addWidget(self.review_hint)
+        quota_layout.addWidget(button(tr('Открыть подтверждения'),lambda:self.navigation.setCurrentRow(3)))
+        layout.addWidget(ResponsiveColumns(active,quotas))
+        route,route_layout=panel(tr('Наблюдаемый маршрут'))
+        self.network=RouterNetwork(compact=True);self.network.setMinimumHeight(130);self.network.setMaximumHeight(150)
+        route_layout.addWidget(self.network)
+        self.network_state=label(tr('Новая задача → оценка → модель → проверка'),'muted');route_layout.addWidget(self.network_state)
+        route_layout.addWidget(button(tr('Просмотреть модели'),lambda:self.navigation.setCurrentRow(2)))
+        layout.addWidget(route)
         layout.addLayout(row(label(tr('Далее по маршруту'),'section'),button(tr('Вся очередь'),lambda:self.navigation.setCurrentRow(1))))
-        cards=QHBoxLayout();cards.setSpacing(10);self.queue_cards=[]
+        cards=QVBoxLayout();cards.setSpacing(8);self.queue_cards=[]
         for index in range(3):
             card,content=panel(tr('Очередь свободна'));title=content.itemAt(0).widget()
-            detail=label(tr('Добавьте новую миссию'),'muted');content.addWidget(detail);cards.addWidget(card,1)
+            detail=label(tr('Добавьте новую миссию'),'muted');content.addWidget(detail);cards.addWidget(card)
             self.queue_cards.append((title,detail,card))
         layout.addLayout(cards)
+        self.queue_empty=label(tr('Очередь свободна · создайте первую миссию'),'muted');layout.addWidget(self.queue_empty)
         self.next_summary=label(tr('Очередь пуста'),'muted');self.next_summary.hide()
         self._page_shell(page)
 
@@ -121,7 +134,7 @@ class MainWindow(QMainWindow):
         if identity:self.bridge.request('result',identity=identity)
 
     def add_page(self,title,page):
-        self.navigation.addItem(title);page.setMinimumSize(700,560);self._page_shell(page)
+        self.navigation.addItem(title);page.setMinimumSize(0,480);self._page_shell(page)
 
     def update_snapshot(self,data):
         set_language(data.get('preferences',{}).get('language','ru'))
@@ -130,6 +143,10 @@ class MainWindow(QMainWindow):
         set_text(self.limit_summary, 'setText', limits_text(data['limits']))
         self.quota_telemetry.set_data(data['limits'],data['preferences'].get('reducedMotion',False))
         jobs=data['missions'];active=next((j for j in jobs if j['id']==data['active']),None)
+        self.control_banner.set_state(control_state(data))
+        for key,statuses in [('pending',{'pending'}),('approval',{'waiting_approval'}),('attention',{'failed','needs_attention'})]:
+            self.queue_metrics.values[key].setText(str(sum(j['status'] in statuses for j in jobs)))
+        fresh,_=quota_freshness(data);set_text(self.dashboard_freshness,'setText',fresh)
         self.render_active()
         if active and data['workerRunning']:
             if not self.elapsed_timer.isActive():self.elapsed_timer.start()
@@ -137,7 +154,9 @@ class MainWindow(QMainWindow):
         pending=sorted((j for j in jobs if j['status']=='pending'),key=lambda j:(-j['priority'],j['sequence']))[:4]
         set_text(self.next_summary, 'setText', join_text('\n', (format_text([format_value(j['title'], -1, ''), tr(' · приоритет '), format_value(j['priority'], -1, ''), ' · ']) + (tr('ожидает ') + join_text(', ', j['dependsOn']) if j['dependsOn'] else tr('готово к запуску')) for j in pending)) or tr('Нет ожидающих заданий'))
         names={job['id']:job['title'] for job in jobs}
+        self.queue_empty.setVisible(not pending)
         for index,(title,detail,card) in enumerate(self.queue_cards):
+            card.setVisible(index<len(pending))
             if index<len(pending):
                 job=pending[index];set_text(title, 'setText', job['title'])
                 set_text(detail, 'setText', tr('Приоритет ') + display(job['priority']) + ' · ' + STATUS.get(job['status'], job['status']) + '\n' + (tr('Ожидает ') + join_text(', ', (names.get(key, key) for key in job['dependsOn'])) if job['dependsOn'] else tr('Готово к запуску')))
@@ -174,10 +193,9 @@ class MainWindow(QMainWindow):
             set_text(self.network_state, 'setText', STATUS.get(state, state) + ' · ' + decision.get('model', tr('Модель не выбрана')) + ' / ' + enum_label(decision.get('effort','—')))
             from pathlib import Path
             reason=message_text(decision.get('reason',''));wait=message_text(live.get('waitReason') or live.get('stopReason') or '')
-            shorten=lambda value,maximum:value if len(value)<=maximum else value[:maximum-1]+'…'
             project=active['project'];project_name=Path(project).name or project
             self.active_summary.setToolTip(project+'\n'+reason+'\n'+wait)
-            set_text(self.active_summary, 'setText', join_text('\n', filter(None, [project_name, STATUS.get(state, state) + ' · ' + duration(active, data.get('workerRunning', False)), decision.get('model', tr('Модель ещё не выбрана')) + ' / ' + enum_label(decision.get('effort','—')), shorten(reason, 90), shorten(wait, 90)])))
+            set_text(self.active_summary, 'setText', join_text('\n\n', filter(None, [project_name, STATUS.get(state, state) + ' · ' + duration(active, data.get('workerRunning', False)), decision.get('model', tr('Модель ещё не выбрана')) + ' / ' + enum_label(decision.get('effort','—')), reason, wait])))
         else:
             set_text(self.mission_title, 'setText', tr('Нет активной миссии'));set_text(self.active_summary, 'setText', tr('Выберите проект и создайте задание.'));set_text(self.network_state, 'setText', tr('Новая задача → оценка → модель → проверка'))
 
@@ -202,6 +220,6 @@ class MainWindow(QMainWindow):
             if self.data.get('preferences',{}).get('closeToTray',True) and QSystemTrayIcon.isSystemTrayAvailable():self.hide()
             else:self.integration.exit()
             return
-        self.page_animation.stop();self.network.pulse.stop();self.quota_telemetry.motion.stop();self.elapsed_timer.stop()
+        self.page_animation.stop();self.network.pulse.stop();self.quota_telemetry.motion.stop();self.elapsed_timer.stop();self.control_banner.motion.stop()
         for control in self.findChildren(MotionButton):control.motion.stop()
         event.accept()

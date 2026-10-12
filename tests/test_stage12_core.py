@@ -61,6 +61,3 @@ def test_stage12_responsive_columns(app):
     columns.resize(1100,400);app.processEvents()
     assert columns.box.direction()==QBoxLayout.LeftToRight
     columns.close()
-
-
-

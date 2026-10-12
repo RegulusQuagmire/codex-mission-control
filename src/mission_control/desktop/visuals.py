@@ -2,7 +2,7 @@
 from .i18n import tr, display, join_text, format_text, format_value, enum_label, message_text
 from .localized_widgets import QWidget, QPushButton, set_text
 import math
-from PySide6.QtCore import Qt,QPointF,QRectF,Property,QPropertyAnimation,QEasingCurve,QAbstractAnimation
+from PySide6.QtCore import Qt,QPointF,QRectF,Property,QPropertyAnimation,QEasingCurve,QAbstractAnimation,Signal
 from PySide6.QtGui import QColor, QPainter, QPen, QRadialGradient, QPainterPath, QFont
 from PySide6.QtWidgets import QApplication, QSizePolicy
 from .theme import tokens
@@ -50,12 +50,27 @@ class MotionButton(QPushButton):
 
 class RouterNetwork(QWidget):
     """The displayed nodes are catalog/decision facts, never illustrative model IDs."""
+    model_inspected=Signal(str)
     def __init__(self,parent=None,compact=False):
         super().__init__(parent);self.compact=compact;self.models=[];self.selected=None;self.reason=''
         self.phase=tr('Нет активной миссии');self.effort='—';self.active=False;self.reduced_motion=False
         self._pulse=1.;self._signature=None;self.pulse=animation(self,b'activity',0.,1.,750)
+        self._targets=[];self.inspected=None;self.availability={};self.setFocusPolicy(Qt.StrongFocus)
         self.setMinimumSize(280,130 if compact else 330)
         self.setAccessibleName(tr('Сеть решений Smart Router'));self.setToolTip(tr('Модели и решения из Codex. Линии показывают выбранный маршрут.'))
+    def inspect(self,identity):
+        self.inspected=identity;self.model_inspected.emit(identity);self.update()
+    def mousePressEvent(self,event):
+        if event.button()==Qt.LeftButton:
+            for identity,rect in self._targets:
+                if rect.contains(event.position()):self.inspect(identity);self.setFocus();event.accept();return
+        super().mousePressEvent(event)
+    def keyPressEvent(self,event):
+        if self.models and event.key() in (Qt.Key_Left,Qt.Key_Right,Qt.Key_Home,Qt.Key_End):
+            ids=[m['model'] for m in self.models];current=ids.index(self.inspected) if self.inspected in ids else -1
+            index=0 if event.key()==Qt.Key_Home else len(ids)-1 if event.key()==Qt.Key_End else (current+(1 if event.key()==Qt.Key_Right else -1))%len(ids)
+            self.inspect(ids[index]);event.accept();return
+        super().keyPressEvent(event)
     def get_activity(self):return self._pulse
     def set_activity(self,value):self._pulse=value;self.update()
     activity=Property(float,get_activity,set_activity)
@@ -97,6 +112,7 @@ class RouterNetwork(QWidget):
         self.write(painter,QRectF(point.x()-radius+3,point.y()-16,radius*2-6,32),name,17 if radius>40 else 12)
     def paintEvent(self,event):
         painter=QPainter(self);painter.setRenderHint(QPainter.Antialiasing);w,h=self.width(),self.height()
+        self._targets=[]
         core=QPointF(w*.41,h*.48);origin=QPointF(w*.10,h*.48);radius=32 if self.compact else 49
         if not self.compact:
             self.glow(painter,core,min(w,h)*.47,.10)
@@ -112,13 +128,18 @@ class RouterNetwork(QWidget):
             for index,model in enumerate(visible_models):
                 y=h*.48 if count==1 else h*(.10+.64*index/(count-1))
                 point=QPointF(w*(.82 if index==0 else .75),y);chosen=model['model']==self.selected
+                self._targets.append((model['model'],QRectF(point.x()-36,point.y()-36,72,108)))
                 self.link(painter,core,point,chosen);self.node(painter,point,29,model['model'],chosen)
+                if model['model']==self.inspected:
+                    painter.setPen(QPen(QColor(tokens()['text']),2,Qt.DashLine));painter.setBrush(Qt.NoBrush);painter.drawEllipse(point,34,34)
                 if not self.compact:
                     left=max(0,min(w-184,point.x()-92))
                     self.write(painter,QRectF(left,point.y()+33,184,20),model.get('displayName') or model['model'],12)
-                    self.write(painter,QRectF(left,point.y()+52,184,20),enum_label(self.effort) if chosen else tr('В каталоге'),12,True)
+                    self.write(painter,QRectF(left,point.y()+52,184,20),tr('Недоступна для новой отправки') if self.availability.get(model['model']) is False else enum_label(self.effort) if chosen else tr('В каталоге'),12,True)
         else:self.write(painter,QRectF(w*.60,h*.40,w*.37,50),tr('Нет решения') if self.compact and not self.selected else tr('Каталог не получен'),13,True)
-        if not self.compact:self.write(painter,QRectF(core.x()-112,core.y()+radius+12,224,24),tr('Интеллектуальный выбор'),12,True)
+        if not self.compact:self.write(painter,QRectF(core.x()-112,core.y()+radius+12,224,24),tr('Наблюдаемый маршрут'),12,True)
+        if self.hasFocus():
+            painter.setPen(QPen(QColor(tokens()['accent']),2));painter.setBrush(Qt.NoBrush);painter.drawRoundedRect(QRectF(self.rect()).adjusted(2,2,-2,-2),8,8)
 
 class QuotaTelemetry(QWidget):
     """Observed remaining percentages; labels stay exact while bars settle."""
