@@ -24,31 +24,31 @@
 
 ## Tasks
 
-- [ ] **1. Общие компоненты и токены** (`theme.py`, `components.py`, `presentation.py`).
+- [x] **1. Общие компоненты и токены** (`theme.py`, `components.py`, `presentation.py`).
   Red tests: `test_stage12_state_priority`, `test_stage12_limit_freshness`,
   `test_stage12_responsive_columns`, семантический контраст обеих тем.
   Реализовать общий баннер состояния, адаптивную пару панелей и сводку показателей.
   Проверить и закоммитить самостоятельную основу.
-- [ ] **2. Dashboard** (`window.py`, `visuals.py`).
+- [x] **2. Dashboard** (`window.py`, `visuals.py`).
   Red tests: существенные состояния, причины выбора, реальные следующие задачи,
   запрос отмены остаётся неподтверждённым. Сохранить существующие контролы/API.
   Убрать пустые карточки и декоративную доминанту; проверить малое окно и reduced motion.
-- [ ] **3. Interactive Router** (`router.py`, `visuals.py`, `presentation.py`).
+- [x] **3. Interactive Router** (`router.py`, `visuals.py`, `presentation.py`).
   Red tests: только реальные ID, policy ceiling, hidden/input modalities,
   отсутствующая выбранная модель, инспекция узла не вызывает bridge request.
   Дать графу мышь/клавиатуру и равноправное текстовое представление всех моделей.
-- [ ] **4. Missions** (`missions.py`).
+- [x] **4. Missions** (`missions.py`).
   Red tests: поиск/фильтр, ID после перестановки, скрытый выбор отключает действия,
   зависимости, отсутствие изменений пользовательского текста и определения задачи.
   Добавить поиск, фильтр, детали и честное отображение pending stop/pause.
-- [ ] **5. Остальные экраны** (`insights.py`, `approvals.py`, `settings.py`, `overlay.py`).
+- [x] **5. Остальные экраны** (`insights.py`, `approvals.py`, `settings.py`, `overlay.py`).
   Red tests: неизвестные лимиты, возраст данных, реальные soft-pause причины,
   финансовые предупреждения, неизменность approvals. Общая типографика/состояния.
-- [ ] **6. GUI QA и производительность** (`tools/capture_stage12.py`, tests).
+- [x] **6. GUI QA и производительность** (`tools/capture_stage12.py`, tests).
   Снимки RU/EN × Dark/Light; размеры/DPI; error/empty/large queue/attention/wait.
   Измерить idle CPU/memory, задержку event loop и обновление большой очереди.
   Запустить полный pytest и независимое ревью; исправить находки и повторить проверки.
-- [ ] **7. Подготовка результата** (docs, screenshot gallery).
+- [x] **7. Подготовка результата** (docs, screenshot gallery).
   Проверить чистую локальную копию, secret scan, original HEAD/17 commits,
   состав staged changes и идентичность каждого нового коммита.
   Финальный отчёт и остановка перед публикацией Stage 12.
@@ -59,3 +59,10 @@
 - Ruling: сохраняем текущие navigation destinations и нативное окно; scope — GUI evolution.
 - Ruling: UI/UX database предложила landing-page patterns, не подходящие нативному desktop;
   используются проверенные рекомендации по focus и Qt/Fluent, без web-компонентов/шрифтов.
+
+- Implementation commits: 40cdc91, 51948f6, 61bcd6e, 35b5f08.
+- Independent review: 3 presentation findings fixed, rechecked, no remaining findings.
+- Windows QA: 214 native captures, offline only; Qt scaling 100/125/150/200%, no OS DPI changes.
+- Clean clone: wheel/sdist, RU/EN native startup, seven pages, no connection checks.
+- Original repository: 17 commits, HEAD 5e6128bee9e4b439ddf25d82c46a673e9385c6ae, clean.
+- Stage 12 stays local pending owner confirmation. Details: ../STAGE12.md.

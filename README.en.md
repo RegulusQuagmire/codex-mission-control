@@ -1,5 +1,10 @@
 # Codex Mission Control
 
+This branch prepares Stage 12 **Concept C Evolution**: an action-first Dashboard,
+Router inspection, mission search and explicit quota freshness.
+See [changes, validation and before/after captures](docs/STAGE12.md).
+Publication to public main awaits owner approval.
+
 [Русский](README.md) | **English**
 
 An open-source command center for Codex workflows.
