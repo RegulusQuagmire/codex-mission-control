@@ -1,0 +1,191 @@
+[
+  {
+    "name": "cryptography",
+    "version": "50.0.2",
+    "scope": "runtime",
+    "license": "Apache-2.0 OR BSD-3-Clause",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/cryptography/LICENSE",
+      "packaging/licenses/cryptography/LICENSE.APACHE",
+      "packaging/licenses/cryptography/LICENSE.BSD"
+    ]
+  },
+  {
+    "name": "cffi",
+    "version": "2.1.1",
+    "scope": "runtime",
+    "license": "MIT-0",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/cffi/LICENSE"
+    ]
+  },
+  {
+    "name": "pycparser",
+    "version": "3.11",
+    "scope": "runtime",
+    "license": "BSD-3-Clause",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/pycparser/LICENSE"
+    ]
+  },
+  {
+    "name": "PySide6-Essentials",
+    "version": "6.12.0",
+    "scope": "desktop",
+    "license": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+    "obligations": "Use LGPL option; preserve notices, permit library replacement/relinking and provide corresponding library source when distributing binaries.",
+    "license_files": [
+      "packaging/licenses/PySide6-Essentials/LicenseRef-Qt-Commercial.txt"
+    ]
+  },
+  {
+    "name": "shiboken6",
+    "version": "6.12.0",
+    "scope": "desktop",
+    "license": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+    "obligations": "Use LGPL option; preserve notices, permit library replacement/relinking and provide corresponding library source when distributing binaries.",
+    "license_files": [
+      "packaging/licenses/shiboken6/LicenseRef-Qt-Commercial.txt"
+    ]
+  },
+  {
+    "name": "pytest",
+    "version": "9.1.1",
+    "scope": "test",
+    "license": "MIT",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/pytest/LICENSE"
+    ]
+  },
+  {
+    "name": "colorama",
+    "version": "0.4.6",
+    "scope": "test",
+    "license": "BSD-3-Clause",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/colorama/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "iniconfig",
+    "version": "2.3.1",
+    "scope": "test",
+    "license": "MIT",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/iniconfig/LICENSE"
+    ]
+  },
+  {
+    "name": "packaging",
+    "version": "26.3",
+    "scope": "test",
+    "license": "Apache-2.0 OR BSD-2-Clause",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/packaging/LICENSE",
+      "packaging/licenses/packaging/LICENSE.APACHE",
+      "packaging/licenses/packaging/LICENSE.BSD"
+    ]
+  },
+  {
+    "name": "pluggy",
+    "version": "1.6.0",
+    "scope": "test",
+    "license": "MIT",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/pluggy/LICENSE"
+    ]
+  },
+  {
+    "name": "Pygments",
+    "version": "2.21.0",
+    "scope": "test",
+    "license": "BSD-2-Clause",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/Pygments/AUTHORS",
+      "packaging/licenses/Pygments/LICENSE"
+    ]
+  },
+  {
+    "name": "setuptools",
+    "version": "84.0.0",
+    "scope": "build",
+    "license": "MIT",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE.APACHE",
+      "packaging/licenses/setuptools/LICENSE.BSD",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE",
+      "packaging/licenses/setuptools/LICENSE.txt",
+      "packaging/licenses/setuptools/LICENSE"
+    ]
+  },
+  {
+    "name": "pyinstaller",
+    "version": "6.22.0",
+    "scope": "build",
+    "license": "GPL-2.0-or-later WITH Bootloader-exception; selected files Apache-2.0",
+    "obligations": "Preserve applicable notices and exception; changes to PyInstaller itself retain its license.",
+    "license_files": [
+      "packaging/licenses/pyinstaller/COPYING.txt"
+    ]
+  },
+  {
+    "name": "altgraph",
+    "version": "0.17.5",
+    "scope": "build",
+    "license": "MIT",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/altgraph/LICENSE"
+    ]
+  },
+  {
+    "name": "pefile",
+    "version": "2024.8.26",
+    "scope": "build",
+    "license": "MIT",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/pefile/LICENSE"
+    ]
+  },
+  {
+    "name": "pyinstaller-hooks-contrib",
+    "version": "2026.8",
+    "scope": "build",
+    "license": "GPL-2.0-or-later (build hooks); Apache-2.0 (runtime hooks)",
+    "obligations": "GPL applies to redistributed standard hooks; bundled runtime hooks are Apache-2.0. Build tool is not project code.",
+    "license_files": [
+      "packaging/licenses/pyinstaller-hooks-contrib/LICENSE"
+    ]
+  },
+  {
+    "name": "pywin32-ctypes",
+    "version": "0.2.3",
+    "scope": "build",
+    "license": "BSD-3-Clause",
+    "obligations": "Preserve copyright, license and disclaimers; Apache components also retain applicable NOTICE and modification notices.",
+    "license_files": [
+      "packaging/licenses/pywin32-ctypes/LICENSE.txt"
+    ]
+  }
+]

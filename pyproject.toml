@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-mission-control"
+version = "0.7.0"
+description = "Windows controller for Codex App Server with smart routing and durable quota waiting"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+requires-python = ">=3.12"
+dependencies = ["cryptography>=50.0.2,<51"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+desktop = ["PySide6-Essentials>=6.8,<7"]
+build = ["pyinstaller==6.22.0"]
+
+[project.scripts]
+mission-control = "mission_control.cli:main"
+
+[project.gui-scripts]
+mission-control-desktop = "mission_control.desktop.app:main"
+
+[project.urls]
+Repository = "https://github.com/RegulusQuagmire/codex-mission-control"
+Issues = "https://github.com/RegulusQuagmire/codex-mission-control/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,0 +1,6 @@
+include README.md LICENSE THIRD_PARTY_NOTICES.md ARCHITECTURE.md CHANGELOG.md ROADMAP.md CONTRIBUTING.md SECURITY.md
+include *.pyw *.vbs
+recursive-include tests *.py
+recursive-include docs *.md *.json *.png
+recursive-include packaging *.py *.ps1 *.spec *.iss *.txt
+recursive-include tools *.py
