@@ -110,7 +110,14 @@ def test_secret_in_quoted_task_is_rejected_before_queue_persistence(tmp_path):
     assert not q.path.exists()
 
 
-def test_root_change_and_approval_revocation_are_one_transaction(tmp_path,monkeypatch):
+def test_root_change_and_approval_revocation_are_one_transaction(tmp_path_factory,monkeypatch):
+    # Hosted Windows images expose a synthetic database password "root". The
+    # fail-closed secret guard correctly rejects that substring in a path too.
+    # Keep the transactional fixture independent of the descriptive test name,
+    # and explicitly retain credential rejection under this runner condition.
+    monkeypatch.setenv('CI_DATABASE_PASSWORD','root')
+    with pytest.raises(StateError):reject_secrets('root')
+    tmp_path=tmp_path_factory.mktemp('approval-transaction')
     first=tmp_path/'first';first.mkdir();second=tmp_path/'second';second.mkdir()
     q=MissionQueue(tmp_path/'q.sqlite3');q.add(text_job('a',project=str(first)))
     configure(q,[str(first)]);approve(q,'a');store=q.journal()

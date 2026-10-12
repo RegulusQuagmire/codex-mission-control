@@ -52,6 +52,12 @@ These checks ran on one Windows developer host, not a clean Windows VM. Live inf
 and stage-11 interruption were deliberately not tested. GitHub-hosted CI results must
 be checked separately after publication; local results are not presented as hosted results.
 
+The first hosted run exposed a test-fixture collision: a runner database password
+(`root`) appeared in a pytest directory derived from the test name. The existing
+secret guard conservatively rejected it. The transaction test now uses a neutral
+temporary directory and explicitly verifies that the synthetic credential is still
+rejected. Production filtering and all transaction/rollback assertions are unchanged.
+
 ## Before a binary release
 
 Obtain separate owner authorization, complete the exact native dependency/SBOM and
