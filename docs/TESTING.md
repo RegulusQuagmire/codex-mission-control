@@ -20,3 +20,8 @@ and never approves execution or calls a real Codex server.
 CI compiles code, installs the declared dependencies, runs the offline suite, checks
 installed dependency consistency/vulnerabilities and scans tracked files for secrets.
 It has read-only repository permissions, no account secrets and no publication step.
+## Local Stage 11 + Evolution QA
+
+Run the entire offline suite serially after integration, including `test_stage11_ui.py`
+and `test_stage11_backend_service.py`. Do not substitute historical branch results.
+Native Windows screenshot procedure: [Stage 11 integration](STAGE11_INTEGRATION.md#offline-qa).

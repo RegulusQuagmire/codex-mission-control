@@ -18,7 +18,7 @@ from .state import state_exists, StateError, load_state, save_state, state_lock
 from . import validator
 
 STATUSES={'pending','running','paused','completed','failed','cancelled','needs_attention',
-          'waiting_approval','waiting_limit','waiting_credit','waiting_network','waiting_active','waiting_model','auth_required','limits_unsupported'}
+          'waiting_approval','waiting_resume','waiting_limit','waiting_credit','waiting_network','waiting_active','waiting_model','auth_required','limits_unsupported'}
 
 
 def worker_lease_path():
@@ -140,7 +140,7 @@ class MissionQueue:
             data['missions'][job['id']]=job;self._save(data)
         return data
 
-    def control(self,action,identity=None,*,priority=None,acknowledge_uncertain=False):
+    def control(self,action,identity=None,*,priority=None,acknowledge_uncertain=False,expected_turn_id=None):
         with state_lock(self.path), self.storage():
             data=self.read()
             if identity is None:
@@ -157,6 +157,14 @@ class MissionQueue:
                 if not active:job['status']='paused'
             elif action=='resume':
                 if job['cancelRequested'] or job['status'] in {'completed','cancelled','failed','needs_attention'}:raise StateError('Mission cannot resume')
+                if job.get('runPath') and state_exists(Path(job['runPath'])):
+                    with state_lock(Path(job['runPath'])):
+                        saved=load_state(Path(job['runPath']))
+                        last=saved.get('attempts',[])[-1] if saved.get('attempts') else {}
+                        if last.get('phase')=='paused_turn':
+                            if acknowledge_uncertain is not True or expected_turn_id!=last['turnId']:
+                                raise StateError('Review this interrupted checkpoint and side effects before explicit continuation')
+                            last['continuationApproved']=last['turnId'];save_state(Path(job['runPath']),saved)
                 job['pauseRequested']=False
                 if job['status']=='paused':job['status']='running' if active else 'pending'
             elif action=='cancel':

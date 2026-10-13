@@ -246,8 +246,8 @@ class DesktopService:
         if self.worker_task is None or self.worker_task.done():return await self.start()
         return self.queue.read()
 
-    async def resume_mission(self,identity):
-        self.control('resume',identity)
+    async def resume_mission(self,identity,*,acknowledge_uncertain=False,expected_turn_id=None):
+        self.control('resume',identity,acknowledge_uncertain=acknowledge_uncertain,expected_turn_id=expected_turn_id)
         if self.worker_task is None or self.worker_task.done():return await self.start()
         return self.queue.read()
 

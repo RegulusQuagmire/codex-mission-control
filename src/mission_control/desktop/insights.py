@@ -38,7 +38,9 @@ class LimitsPage(QWidget):
     def update_data(self,data):
         freshness,level=quota_freshness(data);set_text(self.freshness,'setText',freshness);severity(self.freshness,level)
         active=active_mission(data) or {};stage=active.get('live',{}).get('stage') or active.get('status','')
-        pause=tr('Очередь на паузе') if data.get('paused') else STATUS.get(stage,tr('Нет активного ожидания')) if stage.startswith('waiting_') else tr('Очередь работает по сохранённым разрешениям')
+        from .presentation import control_state
+        control=control_state(data)
+        pause=control['title']+'\n'+control['detail']
         set_text(self.pause_state,'setText',pause)
         active=next((j for j in data['missions'] if j['id']==data['active']),None)
         live=(active or {}).get('live',{})

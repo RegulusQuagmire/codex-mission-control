@@ -42,7 +42,8 @@ async def execute_managed(args):
             return {"stage":"limits","inferenceStarted":False,"limits":inspect_limits(limits),"snapshot":limits}
     runner=ManagedRunner(factory,args.state,cwd=cwd)
     if args.command == "managed-resume":
-        return await runner.resume(max_wait=args.max_wait)
+        return await runner.resume(max_wait=args.max_wait,
+            reviewed_turn_id=args.pause_turn_id if args.acknowledge_uncertain_result else None)
     return await runner.run(task,expected=args.expect,mode=Mode(args.mode),
                             policy=LimitPolicy(args.limit_policy,args.limit_threshold),history_path=args.history,
                             excluded=args.exclude_model,thread_id=args.thread_id,max_attempts=args.max_attempts,

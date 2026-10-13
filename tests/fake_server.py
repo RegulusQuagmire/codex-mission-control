@@ -42,8 +42,9 @@ for line in sys.stdin:
         send({"id": rid, "result": counters})
     elif method == "thread/read":
         thread = {"id": "thread-1", "status": {"type": "idle"}, "turns": []}
-        if scenario == "limits_wire":
+        if scenario in {"limits_wire","pause_active","pause_no_terminal"}:
             thread["turns"] = saved_turns
+            if any(t['status']=='inProgress' for t in saved_turns):thread['status']={'type':'active'}
         if scenario == "active_status":
             thread["status"] = {"type": "active", "activeFlags": []}
         if scenario == "active_turn":
@@ -53,7 +54,16 @@ for line in sys.stdin:
         send({"id": rid, "result": {"thread": thread}})
     elif method == "turn/interrupt":
         counters["interrupt"] += 1
+        if scenario in {'pause_active','pause_no_terminal'}:
+            assert msg['params']=={'threadId':'thread-1','turnId':'turn-1'}
+            if scenario=='pause_active':
+                saved_turns[-1]['status']='interrupted'
+                send({'method':'turn/completed','params':{'threadId':'thread-1','turn':{'id':'turn-1','status':'interrupted'}}})
         send({"id": rid, "result": {}})
+    elif method == 'turn/steer' and scenario in {'pause_active','pause_no_terminal'}:
+        assert msg['params']['threadId']=='thread-1' and msg['params']['expectedTurnId']=='turn-1'
+        counters['steer']=counters.get('steer',0)+1
+        send({'id':rid,'result':{'turnId':'turn-1'}})
     elif method == "model/list":
         cursor = msg["params"].get("cursor")
         send({"id": rid, "result": {
@@ -93,6 +103,11 @@ for line in sys.stdin:
         active_effort = params["effort"]
         turn_number += 1
         turn_id = f"turn-{turn_number}"
+        if scenario in {'pause_active','pause_no_terminal'}:
+            saved_turns.append({'id':turn_id,'status':'inProgress','items':[]})
+            send({'id':rid,'result':{'turn':{'id':turn_id,'status':'inProgress'}}})
+            send({'method':'item/agentMessage/delta','params':{'threadId':params['threadId'],'turnId':turn_id,'itemId':'part','delta':'Checkpoint: no tools or file operations performed.'}})
+            continue
         final_text = json.dumps({"model": active_model, "effort": active_effort}) if scenario == "wire" else "\u041f\u0440\u0438\u0432\u0435\u0442 \u2713"
         if scenario == "wire":
             send({"method": "item/completed", "params": {

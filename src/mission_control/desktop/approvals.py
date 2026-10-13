@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 from ..safety import fingerprint
 from .widgets import label,button,plain,row,STATUS
 from .components import StateBanner
-from .presentation import mission_details
+from .presentation import mission_details,checkpoint_pending,checkpoint_confirmed,checkpoint_needs_review,turn_control_state,last_attempt,CHECKPOINT_STAGES
 
 
 WARNING=tr('После подтверждения код может выполняться с правами вашего пользователя Windows. Полноценная изоляция ОС пока отсутствует.')
@@ -107,7 +107,7 @@ class ResultDialog(QDialog):
         decision=run.get('decision') or job.get('model') or {}
         summary=join_text('\n\n', [STATUS.get(job['status'], job['status']), tr('Проект: ') + job['project'], tr('Модель: ') + display(decision.get('model', tr('Нет данных'))) + ' / ' + enum_label(decision.get('effort', '—')), tr('Причина выбора: ') + message_text(decision.get('reason', tr('Нет данных'))), tr('Результат проверки: ') + {True: tr('Пройдена'), False: tr('Не пройдена'), None: tr('Нет данных')}[checks.get('passed')], tr('Изменённые файлы:\n') + (join_text('\n', checks.get('changes', [])) or tr('Нет данных')), tr('Сообщение: ') + message_text(checks.get('feedback') or run.get('stopReason') or tr('Нет ошибок'))])
         if job['type']=='text' and attempts:summary+=tr('\n\nОтвет Codex:\n')+attempts[-1].get('outcome',{}).get('text',tr('Нет данных'))
-        tabs=QTabWidget();tabs.addTab(plain(summary),tr('Результат'));tabs.addTab(plain(value.get('diff') or tr('Нет сохранённого diff')),tr('Изменения'))
+        self.tabs=tabs=QTabWidget();tabs.addTab(plain(summary),tr('Результат'));tabs.addTab(plain(value.get('diff') or tr('Нет сохранённого diff')),tr('Изменения'))
         command_text=join_text('\n\n', (c.get('name', tr('Проверка')) + tr(' · код выхода ') + display(c.get('exitCode', tr('Нет данных'))) + tr(' · тайм-аут ') + display(c.get('timedOut', False)) + '\n' + c.get('output', '') for c in checks.get('commands', [])))
         tabs.addTab(plain(command_text or tr('Проверки ещё не выполнялись')),tr('Проверки'))
         history=[]
@@ -119,6 +119,33 @@ class ResultDialog(QDialog):
         layout.addWidget(tabs,1)
         layout.addWidget(label(tr('Исходный проект не заменяется. Изменения находятся в сохранённой рабочей копии.'),'muted'))
         last=attempts[-1] if attempts else {}
+        if last.get('phase')=='paused_turn' or checkpoint_pending(job):
+            self._pause_identity=job['id'];self._pause_turn=last.get('turnId')
+            self._pause_text=last.get('checkpoint','');self._pause_stale=False;self._pause_sent=False
+            stage_ok=run.get('stage') in CHECKPOINT_STAGES
+            authorized=checkpoint_confirmed(last) and last.get('continuationApproved')==self._pause_turn
+            self._pause_valid=stage_ok and checkpoint_pending(job) and checkpoint_confirmed(last) and (not authorized or bool(job.get('pauseRequested')))
+            self.checkpoint_view=plain(self._pause_text or tr('Текст checkpoint не получен. Это не означает отсутствия выполненных действий.'))
+            self.checkpoint_view.setAccessibleName(tr('Checkpoint прерванного хода'))
+            tabs.addTab(self.checkpoint_view,tr('Checkpoint'));tabs.setCurrentWidget(self.checkpoint_view)
+            layout.addWidget(label(tr('Turn ID: ')+(self._pause_turn or tr('Нет данных')),'muted'))
+            self.checkpoint_warning=label(tr('Файлы, фоновые процессы и внешние действия могли измениться. Проверьте их самостоятельно. Это согласие разрешает только продолжение данного хода, а не исполнение нового кода.'),'warning')
+            self.checkpoint_warning.setProperty('fluentSeverity','warning');layout.addWidget(self.checkpoint_warning)
+            self.checkpoint_status=label(tr('Продолжение требует просмотра и подтверждения'),'muted');layout.addWidget(self.checkpoint_status)
+            if not self._pause_valid:
+                self.checkpoint_status.setText(tr('Продолжение этого хода разрешено') if authorized and stage_ok else tr('Подтверждение завершения хода отсутствует или не совпадает. Продолжение заблокировано.'))
+            self.pause_consent=QCheckBox(tr('Я просмотрел checkpoint и сверил состояние файлов, процессов и внешних действий'))
+            self.pause_consent.setEnabled(self._pause_valid)
+            self.pause_consent.setObjectName('checkpointConsent');layout.addWidget(self.pause_consent)
+            self.continue_button=button(tr('Продолжить эту миссию'),self.continue_paused,True)
+            self.continue_button.setObjectName('checkpointContinue');self.continue_button.setAutoDefault(False)
+            layout.addWidget(self.continue_button)
+            self.pause_consent.stateChanged.connect(self.update_pause_ready)
+            self.checkpoint_view.verticalScrollBar().valueChanged.connect(self.update_pause_ready)
+            self.checkpoint_view.verticalScrollBar().rangeChanged.connect(self.update_pause_ready)
+            tabs.currentChanged.connect(self.update_pause_ready)
+            if hasattr(bridge,'snapshot'):bridge.snapshot.connect(self.pause_snapshot_changed)
+            self.bridge=bridge;self.update_pause_ready()
         uncertain=last.get('validation',{}).get('kind')=='not_retryable'
         if uncertain or job['status']=='needs_attention':
             layout.addWidget(label(tr('Результат операции неизвестен. Изучите журнал и самостоятельно проверьте внешние последствия. Автоматический повтор запрещён.')))
@@ -133,6 +160,26 @@ class ResultDialog(QDialog):
             manager.changed.connect(self.update_retry_ready)
             self.update_retry_ready();layout.addWidget(self.ack)
         layout.addWidget(button(tr('Закрыть'),self.accept))
+    def update_pause_ready(self,*_):
+        bar=self.checkpoint_view.verticalScrollBar()
+        self.continue_button.setEnabled(bool(self._pause_valid and not self._pause_stale and not self._pause_sent
+            and self.tabs.currentWidget() is self.checkpoint_view and self.pause_consent.isChecked() and bar.value()>=bar.maximum()))
+    def pause_snapshot_changed(self,data):
+        job=next((j for j in data.get('missions',[]) if j['id']==self._pause_identity),None)
+        attempt=last_attempt(job) if job else {}
+        if (not job or not checkpoint_pending(job) or not checkpoint_confirmed(attempt)
+                or (job.get('live') or {}).get('stage') not in CHECKPOINT_STAGES
+                or attempt.get('turnId')!=self._pause_turn or attempt.get('checkpoint','')!=self._pause_text
+                or attempt.get('continuationApproved')==self._pause_turn and not job.get('pauseRequested')):
+            self._pause_stale=True;self.pause_consent.setChecked(False);self.pause_consent.setEnabled(False)
+            self.checkpoint_status.setText(tr('Состояние изменилось. Закройте окно и откройте checkpoint заново.'))
+        self.update_pause_ready()
+    def continue_paused(self):
+        if not self.continue_button.isEnabled():return
+        self._pause_sent=True;self.update_pause_ready()
+        self.bridge.request('resume_mission',identity=self._pause_identity,
+                            acknowledge_uncertain=True,expected_turn_id=self._pause_turn)
+        self.accept()
     def update_retry_ready(self,*_):
         bar=self.viewer.verticalScrollBar()
         self.ack.setEnabled(self.consent.isChecked() and self.typed.text()==tr('ПОВТОРИТЬ') and bar.value()>=bar.maximum())
@@ -161,24 +208,29 @@ class ApprovalsPage(QWidget):
         self.update_actions()
     def update_data(self,data):
         self.all_jobs=data['missions']
-        previous_id=(self.selected() or {}).get('id');self.jobs=[j for j in data['missions'] if j['status'] in {'waiting_approval','needs_attention','failed'}]
+        previous_id=(self.selected() or {}).get('id');self.jobs=[j for j in data['missions'] if j['status'] in {'waiting_approval','needs_attention','failed'} or (j.get('live') or {}).get('stage')=='needs_attention' or checkpoint_pending(j)]
         self.list.blockSignals(True)
-        self.list.clear();self.list.addItems([j['title']+' · '+STATUS.get(j['status'],j['status']) for j in self.jobs])
+        self.list.clear();self.list.addItems([j['title']+' · '+(turn_control_state(j)['title'] if checkpoint_pending(j) else
+            STATUS.get((j.get('live') or {}).get('stage') or j['status'],j['status'])) for j in self.jobs])
         if self.jobs:self.list.setCurrentRow(next((i for i,j in enumerate(self.jobs) if j['id']==previous_id),0))
         self.list.blockSignals(False);self.list.setVisible(bool(self.jobs));self.empty_state.setVisible(not self.jobs)
-        waiting=sum(j['status']=='waiting_approval' for j in self.jobs)
+        waiting=sum(j['status']=='waiting_approval' and (j.get('live') or {}).get('stage') in {None,'waiting_approval'} or checkpoint_needs_review(j) for j in self.jobs)
         set_text(self.attention, 'setText', format_text([tr('Ожидают подтверждения: '), format_value(waiting, -1, ''), tr(' · требуют разбора: '), format_value(len(self.jobs) - waiting, -1, '')]) if self.jobs else tr('Нет миссий, требующих разбора'))
         self.update_actions()
     def update_actions(self,*_):
-        job=self.selected();waiting=bool(job and job['status']=='waiting_approval')
-        self.review_button.setEnabled(waiting);self.inspect_button.setEnabled(bool(job))
+        job=self.selected();waiting=bool(job and job['status']=='waiting_approval' and (job.get('live') or {}).get('stage') in {None,'waiting_approval'});checkpoint=checkpoint_pending(job)
+        self.review_button.setEnabled(waiting or checkpoint);self.inspect_button.setEnabled(bool(job))
+        self.review_button.setText(tr('Просмотреть checkpoint') if checkpoint else tr('Просмотреть результат'))
+        if checkpoint:self.review_state.set_state(turn_control_state(job))
+        else:self.review_state.set_state(dict(title=tr('Просмотр перед выполнением'),detail=tr('Сначала выберите результат. Подтверждение относится к конкретной версии файлов.'),severity='warning'))
         set_text(self.selection_detail,'setText',mission_details(job,self.all_jobs))
-        set_text(self.selection_hint, 'setText', tr('Просмотрите файлы и команды перед разрешением выполнения этой версии.') if waiting else tr('Изучите результат и журнал, чтобы определить дальнейшее действие.') if job else tr('Выберите миссию для просмотра'))
+        set_text(self.selection_hint, 'setText', tr('Продолжение хода, доступ к проекту и исполнение результата требуют отдельных подтверждений.') if checkpoint else tr('Просмотрите файлы и команды перед разрешением выполнения этой версии.') if waiting else tr('Изучите результат и журнал, чтобы определить дальнейшее действие.') if job else tr('Выберите миссию для просмотра'))
     def selected(self):
         i=self.list.currentRow();return self.jobs[i] if 0<=i<len(self.jobs) else None
     def review(self):
         job=self.selected()
-        if job and job['status']=='waiting_approval':self.bridge.request('review_result',identity=job['id'])
+        if checkpoint_pending(job):self.bridge.request('result',identity=job['id'])
+        elif job and job['status']=='waiting_approval' and (job.get('live') or {}).get('stage') in {None,'waiting_approval'}:self.bridge.request('review_result',identity=job['id'])
     def inspect(self):
         job=self.selected()
         if job:self.bridge.request('result',identity=job['id'])

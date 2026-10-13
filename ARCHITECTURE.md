@@ -1,6 +1,7 @@
 # Architecture
 
-Codex Mission Control v0.7.0 contains the stage-10 implementation.
+Published v0.7.0 contains Stage 10 and Concept C Evolution. The current
+integration branch adds Stage 11 reviewed pause/continuation to the same execution path.
 
 ## Components
 
@@ -40,7 +41,23 @@ SQLite and DPAPI are Windows-specific. Project files, logs and external Codex st
 are not all encrypted by this application. Approval and checkpoint mechanisms do not
 provide OS isolation, transactional rollback of external effects, or financial guarantees.
 
-## Excluded work
+## Reviewed turn continuation (local Stage 11 integration)
 
-Stage-11 steer/interrupt, reviewed continuation and reset-driven pause/resume are absent.
-The stage-10 submission gate does not interrupt a running turn.
+UI → DesktopService → QueueWorker → ManagedRunner/ProjectRunner → CodexAdapter → RPC.
+`pause.py` targets one acknowledged turn, persists control intent before each RPC,
+and never treats steer/interrupt ACK as terminal evidence. Confirmed terminal events
+or reconciliation produce `paused_turn` / `waiting_resume`. Unknown sends are reconciled,
+never blindly repeated. Bounded text checkpoints are context, not permissions or rollback.
+
+ResultDialog requires checkpoint review and explicit consent for the exact saved turn.
+Snapshot changes invalidate stale consent. Queue/run locks bind the acknowledgement;
+remote turn IDs must match the saved baseline plus reviewed turn at both history reads.
+Continuation preserves thread/mission identity and attempt budget, and rechecks current
+catalog, model/credit/security policies and the final submission guard. Access approvals,
+result execution review IDs and continuation turn IDs remain independent gates.
+
+Storage uses existing version-1 document payloads and unchanged SQL schema. Older
+Stage 10 records remain readable; downgrade of active Stage 11 journals is not promised.
+No atomic server-side expected-idle guarantee exists after the final read. External
+concurrent control of the same thread remains unsupported. No Stage 13, real inference,
+publication, release or installer belongs to this integration.

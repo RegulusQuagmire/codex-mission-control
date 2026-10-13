@@ -8,7 +8,8 @@ from PySide6.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout
 STATUS={'planning':tr('Оценка задачи'),'ready':tr('Маршрут готов'),'submitted':tr('Codex выполняет задание'),'completed_unvalidated':tr('Результат получен, проверка не завершена'),'validation_failed':tr('Проверка не пройдена'),'attempts_exhausted':tr('Попытки исчерпаны'),'limits_unsupported':tr('Лимиты недоступны'),'idle':tr('Нет активной миссии'),'pending':tr('Ожидает'),'running':tr('Выполняется'),'paused':tr('Пауза'),'completed':tr('Завершено'),
         'failed':tr('Ошибка проверки'),'cancelled':tr('Отменено'),'waiting_approval':tr('Нужно подтверждение'),
         'needs_attention':tr('Требуется разбор'),'waiting_limit':tr('Ожидание лимита'),'waiting_credit':tr('Пауза по кредитной политике'),'waiting_network':tr('Нет сети'),
-        'auth_required':tr('Требуется вход'),'waiting_model':tr('Модель недоступна'),'waiting_active':tr('Ожидание Codex')}
+        'auth_required':tr('Требуется вход'),'waiting_model':tr('Модель недоступна'),'waiting_active':tr('Ожидание Codex'),
+        'waiting_resume':tr('Требуется просмотр checkpoint'),'paused_turn':tr('Ход завершён · checkpoint сохранён')}
 
 
 def label(text='',name=None):

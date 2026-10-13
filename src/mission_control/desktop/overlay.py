@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt,QPoint,Signal,QAbstractAnimation
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 from .widgets import label,button,limits_text,STATUS
 from .visuals import MissionBackdrop,RouterNetwork,animation
-from .presentation import quota_freshness,control_state
+from .presentation import quota_freshness,control_state,turn_control_state,checkpoint_needs_review
 from .components import severity
 
 
@@ -76,11 +76,13 @@ class MissionOverlay(MissionBackdrop):
         if active:
             live=active.get('live',{});decision=live.get('decision') or active.get('model') or {}
             state=STATUS.get(live.get('stage') or active['status'],live.get('stage') or active['status'])
+            control=turn_control_state(active)
+            if control:state=control['title']
             set_text(self.summary, 'setText', state + '\n' + active['title'] + '\n' + decision.get('model', tr('Модель не выбрана')) + ' / ' + enum_label(decision.get('effort','—')))
         else:set_text(self.summary, 'setText', state + tr(' · Нет активной миссии'))
         freshness,_=quota_freshness(data)
         set_text(self.details, 'setText', limits_text(data['limits'])+'\n\n'+freshness + tr('\n\nДалее: ') + (next_job['title'] if next_job else tr('Очередь пуста')) + tr('\nТолько миссии Mission Control'))
-        needs=sum(j['status']=='waiting_approval' for j in jobs)
+        needs=sum(j['status']=='waiting_approval' or checkpoint_needs_review(j) for j in jobs)
         set_text(self.approval, 'setText', format_text([tr('Требуется просмотр: '), format_value(needs, -1, ''), tr('. Код не исполняется без согласия.')]) if needs else '')
         self.approval.setVisible(bool(needs))
         self.set_pinned(data['preferences'].get('overlayPinned',True))

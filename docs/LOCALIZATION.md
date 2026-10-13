@@ -79,3 +79,8 @@ synthetic offline data; no model requests were made to capture them.
 Проверки не отправляли реальные inference-запросы и не использовали платные кредиты.
 Локальная сборка служит проверкой упаковки; установщик и GitHub Release не создавались.
 Hosted CI для этих изменений до публикации не запускался.
+## Local Stage 11 additions
+
+Checkpoint review and factual stop/continuation labels are RU/EN developer-owned text.
+Checkpoint/model output, turn/thread IDs, JSON and user text stay opaque. Live language
+changes neither grant consent nor change its turn binding. See [integration](STAGE11_INTEGRATION.md).
