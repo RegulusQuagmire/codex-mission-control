@@ -139,3 +139,9 @@ Stage 5 (SQLite, расширенное восстановление и checkpoi
 SQLite, разрешения, миграция старых JSON, checkpoints, backup и ограничения
 описаны в [STAGE5_SAFETY.md](STAGE5_SAFETY.md). CLI legacy queue-run отключён;
 управление/чтение старых очередей сохранено для миграции.
+## Local reviewed continuation
+
+The Stage 11 integration adds `waiting_resume` and `paused_turn`.
+CLI continuation requires both `--acknowledge-uncertain-result` and `--pause-turn-id`
+for the exact reviewed turn. Controls persist intent; only the existing worker submits
+inference after policy/history checks. See [checkpoint review](STAGE11_INTEGRATION.md).

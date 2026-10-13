@@ -153,7 +153,7 @@ class MissionsPage(QWidget):
         self.search=QLineEdit();self.search.setPlaceholderText(tr('Поиск по названию, ID или проекту'))
         self.search.setAccessibleName(tr('Поиск по названию, ID или проекту'))
         self.status_filter=QComboBox();self.status_filter.addItem(tr('Все состояния'),'all')
-        for status in ('pending','running','paused','waiting_approval','waiting_limit','waiting_credit','waiting_network','needs_attention','failed','completed','cancelled'):
+        for status in ('pending','running','paused','waiting_resume','waiting_approval','waiting_limit','waiting_credit','waiting_network','needs_attention','failed','completed','cancelled'):
             self.status_filter.addItem(STATUS[status],status)
         self.status_filter.setAccessibleName(tr('Все состояния'))
         filters=QHBoxLayout();filters.addWidget(self.search,1);filters.addWidget(self.status_filter);layout.addLayout(filters)
@@ -188,7 +188,8 @@ class MissionsPage(QWidget):
     def update_data(self,data):
         identity=(self.selected() or {}).get('id');self.data=data
         query=self.search.text().casefold();status=self.status_filter.currentData()
-        self.jobs=[j for j in data['missions'] if (status=='all' or j['status']==status) and
+        from .presentation import checkpoint_pending
+        self.jobs=[j for j in data['missions'] if (status=='all' or j['status']==status or status=='waiting_resume' and checkpoint_pending(j)) and
             (not query or query in ' '.join(str(j.get(key,'')) for key in ('title','id','project')).casefold())]
         set_text(self.filter_count,'setText',tr('Показано {shown} из {total}',shown=len(self.jobs),total=len(data['missions'])))
         set_text(self.empty_state,'setText',tr('Нет совпадений · измените поиск или фильтр') if data['missions'] else tr('Начните с новой миссии\nОпишите результат, выберите проект и проверки. После просмотра разрешений миссия будет готова к запуску.'))
@@ -201,7 +202,10 @@ class MissionsPage(QWidget):
         for i,j in enumerate(self.jobs):
             if j['id']==identity:selected=i
             decision=j.get('live',{}).get('decision') or j.get('model') or {}
-            values=[j['title'],STATUS.get(j['status'],j['status']),display(j['priority']),decision.get('model','—'),duration(j),
+            from .presentation import turn_control_state
+            control=turn_control_state(j)
+            stage=(j.get('live') or {}).get('stage') or j['status']
+            values=[j['title'],control['title'] if control else STATUS.get(stage,stage),display(j['priority']),decision.get('model','—'),duration(j),
                 display(len(j.get('live', {}).get('attempts') or j.get('attempts', []))),join_text(', ', (next((d['title'] for d in data['missions'] if d['id']==identity),identity) for identity in j['dependsOn'])) or '—']
             for col,value in enumerate(values):self.table.setItem(i,col,QTableWidgetItem(value))
         if selected>=0:self.table.selectRow(selected)
@@ -212,7 +216,9 @@ class MissionsPage(QWidget):
         self.edit_button.setEnabled(bool(job and status in {'pending','paused'} and not job['dispatchStarted']))
         self.access_button.setEnabled(bool(job and not self.data.get('active')))
         self.pause_button.setEnabled(bool(job and not terminal and status!='paused'))
-        self.resume_button.setEnabled(status=='paused')
+        from .presentation import checkpoint_pending
+        self.resume_button.setEnabled(bool(job and (status=='paused' or checkpoint_pending(job)) and not job.get('cancelRequested')
+            and job.get('live',{}).get('stage')!='needs_attention'))
         self.cancel_button.setEnabled(bool(job and status not in {'completed','failed','needs_attention','cancelled'}))
         attempts=(job or {}).get('attempts',[]);last=attempts[-1] if attempts else {}
         uncertain=last.get('validation',{}).get('kind')=='not_retryable'
@@ -237,7 +243,9 @@ class MissionsPage(QWidget):
     def control(self,action,**values):
         job=self.selected()
         if job:
-            if action=='resume':self.bridge.request('resume_mission',identity=job['id'])
+            from .presentation import checkpoint_pending
+            if action=='resume' and checkpoint_pending(job):self.bridge.request('result',identity=job['id'])
+            elif action=='resume':self.bridge.request('resume_mission',identity=job['id'])
             else:self.bridge.request('control',action=action,identity=job['id'],**values)
     def cancel(self):
         if QMessageBox.question(self,tr('Отмена'),tr('Остановить это задание? Уже отправленный запрос может потребовать восстановления.'))==QMessageBox.Yes:self.control('cancel')

@@ -81,5 +81,5 @@ async def execute_queue(args):
             return factory
         data=await QueueWorker(q,factory_for_cwd).run(max_wait=args.max_wait)
     else:
-        data=q.control(args.command.removeprefix('queue-'),args.mission_id,priority=args.priority,acknowledge_uncertain=args.acknowledge_uncertain_result)
+        data=q.control(args.command.removeprefix('queue-'),args.mission_id,priority=args.priority,acknowledge_uncertain=args.acknowledge_uncertain_result,expected_turn_id=args.pause_turn_id)
     return report(data)

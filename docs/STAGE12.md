@@ -102,3 +102,8 @@ findings fixed and rechecked; 214 native Qt captures; clean clone wheel/sdist an
 startup. Scaling was exercised through Qt factors, not by changing Windows display DPI.
 No real inference, paid credits, installer or GitHub Release. Stage 11 stays separate.
 The owner approved source publication subject to successful CI.
+## Stage 11 integration follow-up
+
+The preceding report describes published Stage 12 alone. Stage 11 is now integrated
+with Evolution; its current regression and native Windows QA
+must be evaluated separately. See [Stage 11 + Evolution](STAGE11_INTEGRATION.md).

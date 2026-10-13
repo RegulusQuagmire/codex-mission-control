@@ -3606,5 +3606,181 @@
   "ID неоднозначен в текущем каталоге": {
     "ru": "ID неоднозначен в текущем каталоге",
     "en": "ID is ambiguous in the current catalog"
+  },
+  "Подтверждение завершения хода отсутствует или не совпадает. Продолжение заблокировано.": {
+    "ru": "Подтверждение завершения хода отсутствует или не совпадает. Продолжение заблокировано.",
+    "en": "Turn completion evidence is missing or mismatched. Continuation is blocked."
+  },
+  "Продолжение этого хода разрешено": {
+    "ru": "Продолжение этого хода разрешено",
+    "en": "Continuation of this turn is authorized"
+  },
+  "Согласие сохранено для точного turn ID. Перед новой отправкой контроллер проверит историю, лимиты и разрешения.": {
+    "ru": "Согласие сохранено для точного turn ID. Перед новой отправкой контроллер проверит историю, лимиты и разрешения.",
+    "en": "Consent is saved for the exact turn ID. The controller will check history, limits and permissions before a new submission."
+  },
+  "Ход завершён · просмотрите checkpoint": {
+    "ru": "Ход завершён · просмотрите checkpoint",
+    "en": "Turn ended · review the checkpoint"
+  },
+  "Откройте checkpoint и сверьте уже выполненные действия. Продолжение требует отдельного согласия на этот ход.": {
+    "ru": "Откройте checkpoint и сверьте уже выполненные действия. Продолжение требует отдельного согласия на этот ход.",
+    "en": "Open the checkpoint and verify actions already performed. Continuation requires separate consent for this turn."
+  },
+  "Исход остановки неизвестен": {
+    "ru": "Исход остановки неизвестен",
+    "en": "Stop outcome unknown"
+  },
+  "Нужна сверка с историей Codex. Неизвестные операции автоматически не повторяются.": {
+    "ru": "Нужна сверка с историей Codex. Неизвестные операции автоматически не повторяются.",
+    "en": "Codex history must be reconciled. Operations with unknown outcomes are never automatically repeated."
+  },
+  "Подтверждение остановки не получено": {
+    "ru": "Подтверждение остановки не получено",
+    "en": "Stop confirmation not received"
+  },
+  "Исход запроса управления требует сверки. ACK не доказывает остановку процессов или отмену действий.": {
+    "ru": "Исход запроса управления требует сверки. ACK не доказывает остановку процессов или отмену действий.",
+    "en": "The control request outcome needs reconciliation. An ACK does not prove processes stopped or actions were undone."
+  },
+  "Запрос прерывания принят": {
+    "ru": "Запрос прерывания принят",
+    "en": "Interrupt request acknowledged"
+  },
+  "Запрошено прерывание": {
+    "ru": "Запрошено прерывание",
+    "en": "Interruption requested"
+  },
+  "Завершение хода ещё не подтверждено. Уже выполненные действия не отменены.": {
+    "ru": "Завершение хода ещё не подтверждено. Уже выполненные действия не отменены.",
+    "en": "Turn completion is not confirmed yet. Actions already performed have not been undone."
+  },
+  "Запрошена мягкая остановка": {
+    "ru": "Запрошена мягкая остановка",
+    "en": "Soft stop requested"
+  },
+  "Просим Codex завершить текущий шаг. Завершение хода ещё не подтверждено.": {
+    "ru": "Просим Codex завершить текущий шаг. Завершение хода ещё не подтверждено.",
+    "en": "Codex is being asked to finish the current step. Turn completion is not confirmed yet."
+  },
+  "Ход завершён · требуется сверка": {
+    "ru": "Ход завершён · требуется сверка",
+    "en": "Turn ended · reconciliation required"
+  },
+  "Контроллер сохраняет итоговое состояние. До завершения сверки продолжение недоступно.": {
+    "ru": "Контроллер сохраняет итоговое состояние. До завершения сверки продолжение недоступно.",
+    "en": "The controller is saving the final state. Continuation is unavailable until reconciliation finishes."
+  },
+  "Ход завершён · проверка результата": {
+    "ru": "Ход завершён · проверка результата",
+    "en": "Turn ended · validating the result"
+  },
+  "Ответ получен. Проверка результата ещё не завершена.": {
+    "ru": "Ответ получен. Проверка результата ещё не завершена.",
+    "en": "The response was received. Result validation has not finished yet."
+  },
+  "Текст checkpoint не получен. Это не означает отсутствия выполненных действий.": {
+    "ru": "Текст checkpoint не получен. Это не означает отсутствия выполненных действий.",
+    "en": "No checkpoint text was received. This does not mean no actions were performed."
+  },
+  "Checkpoint прерванного хода": {
+    "ru": "Checkpoint прерванного хода",
+    "en": "Interrupted turn checkpoint"
+  },
+  "Checkpoint": {
+    "ru": "Checkpoint",
+    "en": "Checkpoint"
+  },
+  "Turn ID: ": {
+    "ru": "Turn ID: ",
+    "en": "Turn ID: "
+  },
+  "Ход завершён, но файлы, фоновые процессы и внешние действия могли измениться. Проверьте их самостоятельно. Это согласие разрешает только продолжение данного хода, а не исполнение нового кода.": {
+    "ru": "Ход завершён, но файлы, фоновые процессы и внешние действия могли измениться. Проверьте их самостоятельно. Это согласие разрешает только продолжение данного хода, а не исполнение нового кода.",
+    "en": "The turn ended, but files, background processes and external actions may have changed. Verify them yourself. This consent authorizes only continuation of this turn, not execution of new code."
+  },
+  "Продолжение требует просмотра и подтверждения": {
+    "ru": "Продолжение требует просмотра и подтверждения",
+    "en": "Continuation requires review and confirmation"
+  },
+  "Я просмотрел checkpoint и сверил состояние файлов, процессов и внешних действий": {
+    "ru": "Я просмотрел checkpoint и сверил состояние файлов, процессов и внешних действий",
+    "en": "I reviewed the checkpoint and verified the state of files, processes and external actions"
+  },
+  "Продолжить эту миссию": {
+    "ru": "Продолжить эту миссию",
+    "en": "Continue this mission"
+  },
+  "Состояние изменилось. Закройте окно и откройте checkpoint заново.": {
+    "ru": "Состояние изменилось. Закройте окно и откройте checkpoint заново.",
+    "en": "The state changed. Close this window and open the checkpoint again."
+  },
+  "Просмотреть checkpoint": {
+    "ru": "Просмотреть checkpoint",
+    "en": "Review checkpoint"
+  },
+  "Продолжение хода, доступ к проекту и исполнение результата требуют отдельных подтверждений.": {
+    "ru": "Продолжение хода, доступ к проекту и исполнение результата требуют отдельных подтверждений.",
+    "en": "Turn continuation, project access and result execution require separate approvals."
+  },
+  "Требуется просмотр checkpoint": {
+    "ru": "Требуется просмотр checkpoint",
+    "en": "Checkpoint review required"
+  },
+  "Ход завершён · checkpoint сохранён": {
+    "ru": "Ход завершён · checkpoint сохранён",
+    "en": "Turn ended · checkpoint saved"
+  },
+  "Continuation review does not match the saved paused turn": {
+    "ru": "Подтверждение продолжения не совпадает с сохранённым ходом.",
+    "en": "Continuation review does not match the saved paused turn"
+  },
+  "Pause lacks matching terminal evidence; no continuation": {
+    "ru": "Нет совпадающего подтверждения завершения хода; продолжение запрещено.",
+    "en": "Pause lacks matching terminal evidence; no continuation"
+  },
+  "Earlier pause lacks reviewed continuation": {
+    "ru": "Для предыдущего прерванного хода нет подтверждения продолжения.",
+    "en": "Earlier pause lacks reviewed continuation"
+  },
+  "Paused turn history missing or no longer terminal; no continuation": {
+    "ru": "История прерванного хода отсутствует или ход больше не завершён; продолжение запрещено.",
+    "en": "Paused turn history missing or no longer terminal; no continuation"
+  },
+  "Mismatched pause confirmation": {
+    "ru": "Подтверждение паузы не совпадает с ходом.",
+    "en": "Mismatched pause confirmation"
+  },
+  "Turn ended; review checkpoint and background/side effects before explicit continuation. Nothing was rolled back.": {
+    "ru": "Ход завершён. Перед явным продолжением просмотрите checkpoint, фоновые процессы и внешние последствия. Ничего не было отменено.",
+    "en": "Turn ended; review checkpoint and background/side effects before explicit continuation. Nothing was rolled back."
+  },
+  "Review this interrupted checkpoint and side effects before explicit continuation": {
+    "ru": "Перед явным продолжением просмотрите checkpoint прерванного хода и проверьте последствия.",
+    "en": "Review this interrupted checkpoint and side effects before explicit continuation"
+  },
+  "Invalid acknowledged turn ID": {
+    "ru": "Сервер подтвердил недостоверный turn ID.",
+    "en": "Invalid acknowledged turn ID"
+  },
+  "Interrupt terminal status not confirmed; reconcile saved turn": {
+    "ru": "Завершение прерываемого хода не подтверждено; нужна сверка сохранённого хода.",
+    "en": "Interrupt terminal status not confirmed; reconcile saved turn"
+  },
+  "Planned interruption confirmed; review checkpoint before continuing": {
+    "ru": "Плановое завершение хода подтверждено; перед продолжением просмотрите checkpoint.",
+    "en": "Planned interruption confirmed; review checkpoint before continuing"
+  },
+  "Файлы, фоновые процессы и внешние действия могли измениться. Проверьте их самостоятельно. Это согласие разрешает только продолжение данного хода, а не исполнение нового кода.": {
+    "ru": "Файлы, фоновые процессы и внешние действия могли измениться. Проверьте их самостоятельно. Это согласие разрешает только продолжение данного хода, а не исполнение нового кода.",
+    "en": "Files, background processes and external actions may have changed. Verify them yourself. This consent authorizes only continuation of this turn, not execution of new code."
+  },
+  "Миссия на паузе. Откройте checkpoint для явного снятия паузы.": {
+    "ru": "Миссия на паузе. Откройте checkpoint для явного снятия паузы.",
+    "en": "The mission is paused. Open its checkpoint to explicitly resume the mission."
+  },
+  "Paused conversation changed after review; no continuation": {
+    "ru": "История диалога изменилась после просмотра; продолжение запрещено.",
+    "en": "Paused conversation changed after review; no continuation"
   }
 }

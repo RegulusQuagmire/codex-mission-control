@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — Stage 11 + Evolution integration
+
+- Bounded steer/interrupt controller, durable checkpoints and exact-turn continuation.
+- RU/EN checkpoint review, stale/duplicate consent protection and independent approvals.
+- Shared factual state presentation across Missions, Dashboard, Limits and Overlay.
+- Re-check the complete known remote turn set before continuing a reviewed checkpoint.
+- Retain Concept C Evolution, public version 0.7.0 and existing SQLite schema.
+- Source integration only; no new release, installer or real inference validation.
+
 ## 0.7.0 — Public Alpha
 
 - First public source snapshot of completed stages 1–10.

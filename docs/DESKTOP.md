@@ -105,3 +105,8 @@ OS sandbox и управления произвольными чатами Codex
 При неизвестных данных отправка блокируется. Сохранённая миссия ждёт
 waiting_credit; продолжение повторно проверяет квоту и ранее выполненные действия.
 Подробности: [ограничения безопасности](../SECURITY.md).
+## Local Stage 11 integration
+
+The Stage 11 integration adds checkpoint review to Missions and Approvals.
+Resume on a paused turn opens review; it cannot bypass exact-turn consent. Queue pause
+is separate. See [RU/EN workflow and limitations](STAGE11_INTEGRATION.md).

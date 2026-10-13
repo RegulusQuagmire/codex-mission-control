@@ -14,7 +14,8 @@ limits, and reviewing generated project changes before execution.
 
 This source snapshot includes completed development stages 1–10, RU/EN localization
 and the Concept C Evolution interface (stage 12). Graceful
-Pause & Resume (stage 11) is still in development and is excluded. The first
+Pause & Resume (stage 11) is excluded from that published snapshot. The current development branch adds Stage 11 and checkpoint review to Evolution;
+see [workflow and limitations](docs/STAGE11_INTEGRATION.md). The first
 public version is 0.7.0; earlier private version numbers did not indicate public maturity.
 
 ## Screenshots
@@ -97,13 +98,15 @@ Approvals, directory checks and recovery checkpoints have limited scopes.
 Do not control the same Codex thread concurrently from another client.
 
 Unknown or exhausted applicable limits block new submissions. Already running
-turns are not stopped by the stage-10 credit gate. Quota cost per task and savings
+turns use bounded cooperative steer/interrupt requests in this integration;
+an RPC acknowledgement does not prove termination or undo effects. Quota cost per task and savings
 percentages are not known. [Security details](docs/SECURITY_HARDENING.md).
 
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md). Pause/resume, visual improvements, routing upgrades
-and project orchestration are future work; they are not features of this alpha.
+See [ROADMAP.md](ROADMAP.md). Stage 11 checkpoint review is integrated in the development branch;
+routing upgrades and project orchestration remain future work. This source update
+does not create a new release or change the historical v0.7.0 snapshot.
 
 ## Development and contributing
 

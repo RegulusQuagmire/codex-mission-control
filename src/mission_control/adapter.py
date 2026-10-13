@@ -19,6 +19,13 @@ class TurnFailed(RuntimeError):
         super().__init__(message)
 
 
+class TurnPaused(TurnFailed):
+    def __init__(self, receipt):
+        self.receipt=receipt
+        super().__init__('Planned interruption confirmed; review checkpoint before continuing',
+                         status='interrupted',error_kind='plannedPause')
+
+
 def safe_failure(error: dict | None) -> tuple[str, int | None]:
     info = (error or {}).get("codexErrorInfo")
     known = {
@@ -45,6 +52,11 @@ class CodexAdapter:
         # Only threads created by this adapter, before it has sent their first turn.
         # Codex supports summary reads but not full history before materialization.
         self._fresh_threads: set[str] = set()
+        self._pause_options = None
+
+    def configure_pause(self, *, stop_requested=None, on_receipt=None, on_checkpoint=None, grace=5):
+        self._pause_options={'stop_requested':stop_requested,'receipt':on_receipt,
+                             'checkpoint':on_checkpoint,'grace':grace}
 
     async def account(self) -> dict:
         result = await self.rpc.request("account/read", {"refreshToken": False})
@@ -152,6 +164,7 @@ class CodexAdapter:
                        *, timeout: float = 120, on_started=None) -> dict:
         async with self._turn_lock:
             turn_id = None
+            control = None
             completed_text: dict[str, tuple[str, str | None]] = {}
             rerouted_model = None
             try:
@@ -181,22 +194,54 @@ class CodexAdapter:
                         "approvalPolicy": "never",
                         "sandboxPolicy": {"type": "readOnly"}}, timeout=timeout, before_send=guard)
                     turn_id = result["turn"]["id"]
+                    if not isinstance(turn_id,str) or not turn_id:
+                        raise ConnectionLost('Invalid acknowledged turn ID')
                     if on_started is not None:
                         on_started(turn_id)
+                    control=None;checkpoint_text='';last_checkpoint=0
+                    active_acknowledged=result['turn'].get('status')=='inProgress'
+                    if self._pause_options is not None:
+                        from .pause import TurnControl
+                        options=self._pause_options
+                        control=TurnControl(self,thread_id,turn_id,model,
+                            stop_requested=options['stop_requested'],receipt=options['receipt'],grace=options['grace'],
+                            active_target=lambda:active_acknowledged)
+                    def checkpoint(text):
+                        if self._pause_options and self._pause_options['checkpoint']:
+                            self._pause_options['checkpoint'](text[-65536:])
                     while True:
-                        event = await self.rpc.next_event()
+                        if control:
+                            await control.tick()
+                            if control.confirm_by is not None and time.monotonic()>=control.confirm_by:
+                                raise ConnectionLost('Interrupt terminal status not confirmed; reconcile saved turn')
+                        try:event = await asyncio.wait_for(self.rpc.next_event(),.25) if control else await self.rpc.next_event()
+                        except TimeoutError:continue
                         params = event.get("params", {})
                         if params.get("threadId") != thread_id:
                             continue
+                        if event['method']=='turn/started' and params.get('turn',{}).get('id')==turn_id:
+                            active_acknowledged=params['turn'].get('status')=='inProgress'
+                        if event['method']=='item/agentMessage/delta' and params.get('turnId')==turn_id:
+                            checkpoint_text=(checkpoint_text+str(params.get('delta','')))[-65536:]
+                            if time.monotonic()-last_checkpoint>=1:
+                                checkpoint(checkpoint_text);last_checkpoint=time.monotonic()
                         if event["method"] == "item/completed" and params.get("turnId") == turn_id:
                             item = params["item"]
                             if item.get("type") == "agentMessage":
                                 completed_text[item["id"]] = (item.get("text", ""), item.get("phase"))
+                                checkpoint_text='\n'.join(text for text,phase in completed_text.values())[-65536:]
+                                checkpoint(checkpoint_text)
                         if (event["method"] == "model/rerouted"
                                 and params.get("turnId") == turn_id):
                             rerouted_model = params.get("toModel")
                         if event["method"] == "turn/completed" and params["turn"]["id"] == turn_id:
+                            active_acknowledged=False
                             status = params["turn"]["status"]
+                            if status=='interrupted' and control and control.reason:
+                                receipt={'threadId':thread_id,'turnId':turn_id,'reason':control.reason,
+                                         'phase':'terminal_interrupted','terminalConfirmed':True,'at':time.time()}
+                                control.receipt(receipt);checkpoint(checkpoint_text)
+                                raise TurnPaused(receipt)
                             if status != "completed":
                                 kind, http_status = safe_failure(params["turn"].get("error"))
                                 raise TurnFailed(f"Turn {turn_id} ended with status={status}",
@@ -205,11 +250,15 @@ class CodexAdapter:
                             if not final:
                                 final = [text for text, phase in completed_text.values() if phase != "commentary"]
                             outcome = {"turnId": turn_id, "status": status, "text": "\n".join(final)}
+                            if control and control.reason:
+                                receipt={'threadId':thread_id,'turnId':turn_id,'reason':control.reason,
+                                         'phase':'terminal_completed','terminalConfirmed':True,'at':time.time()}
+                                control.receipt(receipt);outcome['pauseReceipt']=receipt
                             if rerouted_model is not None:
                                 outcome["reroutedModel"] = rerouted_model
                             return outcome
             except (TimeoutError, asyncio.CancelledError):
-                if turn_id:
+                if turn_id and not (control and control.interrupted):
                     with contextlib.suppress(Exception):
                         await self.rpc.request("turn/interrupt", {
                             "threadId": thread_id, "turnId": turn_id}, timeout=2)

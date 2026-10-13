@@ -7,7 +7,7 @@ from .widgets import label,button,panel,row,limits_text,STATUS,duration
 from .theme import apply_theme
 from .visuals import MissionBackdrop,RouterNetwork,MotionButton,QuotaTelemetry
 from .components import StateBanner,ResponsiveColumns,MetricStrip,ActionStrip
-from .presentation import control_state,quota_freshness
+from .presentation import control_state,quota_freshness,checkpoint_pending,checkpoint_needs_review,turn_control_state
 from .missions import MissionsPage
 from .router import RouterPage
 from .approvals import ApprovalsPage,AccessDialog,ResultApprovalDialog,ResultDialog
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         self.stop_button.setProperty('fluentAppearance','danger')
         layout.addWidget(ActionStrip([self.run_button,self.pause_button,self.resume_button,
             button(tr('Добавить задачу'),lambda:self.missions.edit()),self.stop_button,self.result_button]))
-        self.urgent_action=button(tr('Открыть подтверждения'),lambda:self.navigation.setCurrentRow(3),True)
+        self.urgent_action=button(tr('Открыть подтверждения'),self.open_urgent_review,True)
         self.urgent_action.hide();layout.addWidget(self.urgent_action)
         self.queue_metrics=MetricStrip([('pending',tr('В очереди')),('approval',tr('Ждут согласия')),('attention',tr('Требуют внимания'))])
         layout.addWidget(self.queue_metrics)
@@ -122,7 +122,18 @@ class MainWindow(QMainWindow):
         self.pages.addWidget(scroll)
 
     def resume_queue(self):
-        self.bridge.request('resume_queue')
+        target=next((j for j in self.data.get('missions',[]) if checkpoint_needs_review(j)),None)
+        if target:self.bridge.request('result',identity=target['id'])
+        else:self.bridge.request('resume_queue')
+
+    def open_urgent_review(self):
+        state=control_state(self.data);identity=state.get('mission_id')
+        if state.get('action')=='result':
+            if identity:self.bridge.request('result',identity=identity)
+            return
+        self.navigation.setCurrentRow(3)
+        index=next((i for i,j in enumerate(self.approvals.jobs) if j['id']==identity),None)
+        if index is not None:self.approvals.list.setCurrentRow(index)
 
     def stop_active(self):
 
@@ -145,12 +156,16 @@ class MainWindow(QMainWindow):
         set_text(self.limit_summary, 'setText', limits_text(data['limits']))
         self.quota_telemetry.set_data(data['limits'],data['preferences'].get('reducedMotion',False))
         jobs=data['missions'];active=next((j for j in jobs if j['id']==data['active']),None)
-        self.control_banner.set_state(control_state(data))
-        attention=any(j['status'] in {'waiting_approval','needs_attention','failed'} for j in jobs)
+        control=control_state(data);self.control_banner.set_state(control)
+        review_needed=any(checkpoint_needs_review(j) for j in jobs)
+        attention=control.get('action') in {'checkpoint','approvals','result'}
         self.urgent_action.setVisible(attention)
-        self.urgent_action.setText(tr('Открыть подтверждения') if any(j['status']=='waiting_approval' for j in jobs) else tr('Результат и журнал'))
+        self.urgent_action.setText(tr('Просмотреть checkpoint') if control.get('action')=='checkpoint' else tr('Открыть подтверждения') if control.get('action')=='approvals' else tr('Результат и журнал'))
         for key,statuses in [('pending',{'pending'}),('approval',{'waiting_approval'}),('attention',{'failed','needs_attention'})]:
-            self.queue_metrics.values[key].setText(str(sum(j['status'] in statuses for j in jobs)))
+            self.queue_metrics.values[key].setText(str(sum(j['status'] in statuses or
+                key=='attention' and (j.get('live') or {}).get('stage')=='needs_attention' for j in jobs)))
+        self.queue_metrics.values['approval'].setText(str(sum(j['status']=='waiting_approval' and
+            (j.get('live') or {}).get('stage') in {None,'waiting_approval'} or checkpoint_needs_review(j) for j in jobs)))
         fresh,_=quota_freshness(data);set_text(self.dashboard_freshness,'setText',fresh)
         self.render_active()
         if active and data['workerRunning']:
@@ -166,13 +181,17 @@ class MainWindow(QMainWindow):
                 job=pending[index];set_text(title, 'setText', job['title'])
                 set_text(detail, 'setText', tr('Приоритет ') + display(job['priority']) + ' · ' + STATUS.get(job['status'], job['status']) + '\n' + (tr('Ожидает ') + join_text(', ', (names.get(key, key) for key in job['dependsOn'])) if job['dependsOn'] else tr('Готово к запуску')))
             else:set_text(title, 'setText', tr('Свободное место'));set_text(detail, 'setText', tr('Нет следующего задания'))
-        running=data['workerRunning'];self.run_button.setEnabled(not running and not data['paused'] and
+        unsafe=any(j['status']=='needs_attention' or (j.get('live') or {}).get('stage')=='needs_attention' for j in jobs)
+        running=data['workerRunning'];self.run_button.setEnabled(not running and not data['paused'] and not review_needed and not unsafe and
             (not active or active['status'] not in {'waiting_approval','needs_attention'}))
         self.pause_button.setEnabled(not data['paused'])
         self.stop_button.setEnabled(bool(active and active['status'] not in {'completed','failed','needs_attention','cancelled'}))
         self.result_button.setEnabled(any(j.get('runPath') for j in jobs))
         self.resume_button.setEnabled(data['paused'] and (not active or
             active['status'] not in {'waiting_approval','needs_attention'} or active.get('executionApproved',False)))
+        if review_needed:self.resume_button.setEnabled(True)
+        if active and (active.get('live') or {}).get('stage')=='needs_attention':self.resume_button.setEnabled(False)
+        self.resume_button.setText(tr('Просмотреть checkpoint') if review_needed else tr('Продолжить'))
         theme=data['preferences'].get('theme','dark')
         if getattr(self,'_theme',None)!=theme:apply_theme(QApplication.instance(),theme);self._theme=theme
         self.set_reduced_motion(data['preferences'].get('reducedMotion',False))
@@ -185,7 +204,7 @@ class MainWindow(QMainWindow):
             self._first_snapshot=False
             if not data['preferences'].get('setupComplete'):
                 wizard=SetupWizard(self.bridge,data['preferences'],self);wizard.setAttribute(Qt.WA_DeleteOnClose);wizard.open()
-            elif data['preferences'].get('resumeOnLaunch') and not data['paused']:
+            elif data['preferences'].get('resumeOnLaunch') and not data['paused'] and not review_needed and not unsafe:
                 self.bridge.request('start')
 
     def render_active(self):
@@ -193,14 +212,15 @@ class MainWindow(QMainWindow):
         active=next((j for j in data.get('missions',[]) if j['id']==data.get('active')),None)
         if active:
             live=active.get('live',{});decision=live.get('decision') or active.get('model') or {}
-            state=live.get('stage') or active['status']
+            state=live.get('stage') or active['status'];control=turn_control_state(active)
+            state_label=control['title'] if control else STATUS.get(state,state)
             set_text(self.mission_title, 'setText', active['title'])
-            set_text(self.network_state, 'setText', STATUS.get(state, state) + ' · ' + decision.get('model', tr('Модель не выбрана')) + ' / ' + enum_label(decision.get('effort','—')))
+            set_text(self.network_state, 'setText', state_label + ' · ' + decision.get('model', tr('Модель не выбрана')) + ' / ' + enum_label(decision.get('effort','—')))
             from pathlib import Path
             reason=message_text(decision.get('reason',''));wait=message_text(live.get('waitReason') or live.get('stopReason') or '')
             project=active['project'];project_name=Path(project).name or project
             self.active_summary.setToolTip(project+'\n'+reason+'\n'+wait)
-            set_text(self.active_summary, 'setText', join_text('\n\n', filter(None, [project_name, STATUS.get(state, state) + ' · ' + duration(active, data.get('workerRunning', False)), decision.get('model', tr('Модель ещё не выбрана')) + ' / ' + enum_label(decision.get('effort','—')), reason, wait])))
+            set_text(self.active_summary, 'setText', join_text('\n\n', filter(None, [project_name, state_label + ' · ' + duration(active, data.get('workerRunning', False)), decision.get('model', tr('Модель ещё не выбрана')) + ' / ' + enum_label(decision.get('effort','—')), reason, wait])))
         else:
             set_text(self.mission_title, 'setText', tr('Нет активной миссии'));set_text(self.active_summary, 'setText', tr('Выберите проект и создайте задание.'));set_text(self.network_state, 'setText', tr('Новая задача → оценка → модель → проверка'))
 

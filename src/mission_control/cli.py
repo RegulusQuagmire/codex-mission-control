@@ -169,6 +169,7 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument('--review-id',help='Exact result review ID; approval applies only to these bytes')
     result.add_argument('--accept-user-rights',action='store_true',help='Accept that reviewed code runs with your OS file/network rights; not sandboxed')
     result.add_argument('--acknowledge-uncertain-result',action='store_true',help='After manual reconciliation, explicitly permit retry despite unknown prior side effects')
+    result.add_argument('--pause-turn-id',help='Exact interrupted turn reviewed before queue-resume')
     result.add_argument("--mission-id", help="Mission ID for queue controls")
     result.add_argument("--priority", type=int, help="New priority (larger runs first)")
     result.add_argument("--codex", default="codex", help="Executable name or full path")
