@@ -1,5 +1,10 @@
 # Testing
 
+Stage 13 adds synthetic task/route/history invariants, read-only service inspection,
+stale UI reply/expiry/language checks, and Stage 11 resume compatibility. Run serially.
+See [Stage 13 QA](STAGE13.md) for native Router captures and pinned before/after comparison;
+neither tool performs inference or uses the user's SQLite queue.
+
 Install `.[desktop,dev]`, then run `python -m pytest -q` in the repository root.
 Tests use explicitly synthetic adapters and local subprocess servers; no account,
 network inference or API token is required. Windows is required for DPAPI behavior.

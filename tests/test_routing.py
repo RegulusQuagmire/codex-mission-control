@@ -118,7 +118,7 @@ def test_escalation_effort_then_stronger_model_no_revisit():
 def test_real_observations_influence_next_selection_and_roundtrip(tmp_path):
     history = History()
     assert history.records == {}
-    for _ in range(2):
+    for _ in range(8):
         history.record("gpt-6-luna", "low", Complexity.LOW, False)
     router = SmartRouter(history=history)
     assert router.choose(Task("format"), catalog()).model == "gpt-6.1-sol"
@@ -126,7 +126,7 @@ def test_real_observations_influence_next_selection_and_roundtrip(tmp_path):
     history.save(path)
     loaded = History.load(path)
     assert loaded.records == history.records
-    assert loaded.count("gpt-6-luna", "low", Complexity.LOW) == (0, 2)
+    assert loaded.count("gpt-6-luna", "low", Complexity.LOW) == (0, 8)
     assert loaded.count("gpt-6-luna", "low", Complexity.CRITICAL) == (0, 0)
 
 def test_history_rejects_corrupt_counts(tmp_path):

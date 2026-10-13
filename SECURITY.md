@@ -20,7 +20,8 @@ history, prompts, test artifacts and builds out of source control. `.gitignore` 
 not remove files already tracked. Rotate any exposed credentials with their provider.
 
 Quota gates depend on server metadata and block new submissions conservatively;
-they cannot provide an absolute spending guarantee or stop an active turn in this version.
+they cannot provide an absolute spending guarantee. Stage 11 cooperative steer/interrupt
+control is separate: an RPC ACK does not prove termination or undo external effects.
 Never run privileged CI with untrusted pull requests or provide live account secrets to tests.
 
 See [implementation boundaries](docs/SECURITY_HARDENING.md).

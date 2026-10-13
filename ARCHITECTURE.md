@@ -5,6 +5,12 @@ integration branch adds Stage 11 reviewed pause/continuation to the same executi
 
 ## Components
 
+Stage 13 extends `routing` with bounded `task_analysis` and provenance-aware
+`History.qualityRecords`. `route_inspection` is read-only and shares the existing
+selector; DesktopService exposes it through the Bridge allowlist. It neither owns
+an adapter nor submits inference. Preview fingerprints invalidate changed inputs.
+No SQL schema changes. See [Stage 13](docs/STAGE13.md).
+
 - `desktop/`: Qt Widgets UI, asynchronous bridge, settings, approvals and overlay.
 - `rpc.py` and `adapter.py`: bounded stdio JSON-RPC, notifications, account/catalog/
   limit reads, thread lifecycle and configuration verification.

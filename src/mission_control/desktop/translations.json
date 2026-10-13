@@ -3200,11 +3200,11 @@
     "en": "Quota configuration (JSON): "
   },
   "scoped text/document operation": {
-    "ru": "Ограниченная текстовая задача или работа с документом",
+    "ru": "Ограниченная текстовая операция или правка документации",
     "en": "scoped text/document operation"
   },
   "general task; conservative baseline": {
-    "ru": "Общая задача; осторожная начальная оценка",
+    "ru": "Общая задача; консервативная исходная оценка",
     "en": "general task; conservative baseline"
   },
   "general task": {
@@ -3212,11 +3212,11 @@
     "en": "general task"
   },
   "conservative baseline": {
-    "ru": "Осторожная начальная оценка",
+    "ru": "Консервативная исходная оценка",
     "en": "conservative baseline"
   },
   "architecture or system-wide dependencies": {
-    "ru": "Архитектура или зависимости всей системы",
+    "ru": "Архитектура или общесистемные зависимости",
     "en": "architecture or system-wide dependencies"
   },
   "debugging or cross-module changes": {
@@ -3232,7 +3232,7 @@
     "en": "long specification"
   },
   "substantial specification": {
-    "ru": "Объёмная спецификация",
+    "ru": "Значительный объём задания",
     "en": "substantial specification"
   },
   "personal model policy applied": {
@@ -3782,5 +3782,173 @@
   "Paused conversation changed after review; no continuation": {
     "ru": "История диалога изменилась после просмотра; продолжение запрещено.",
     "en": "Paused conversation changed after review; no continuation"
+  },
+  "Оценка выбранной миссии": {
+    "ru": "Оценка выбранной миссии",
+    "en": "Selected mission assessment"
+  },
+  "Миссия для оценки Router": {
+    "ru": "Миссия для оценки Router",
+    "en": "Mission for Router inspection"
+  },
+  "Оценить без отправки": {
+    "ru": "Оценить без отправки",
+    "en": "Inspect without sending"
+  },
+  "Объяснение выбора Router": {
+    "ru": "Объяснение выбора Router",
+    "en": "Router decision explanation"
+  },
+  "Оценка не отправляет inference и не разрешает запуск. Перед каждой отправкой backend заново проверяет ограничения и approvals.": {
+    "ru": "Оценка не отправляет inference и не разрешает запуск. Перед каждой отправкой backend заново проверяет ограничения и approvals.",
+    "en": "Inspection sends no inference and grants no execution permission. Before each submission the backend rechecks restrictions and approvals."
+  },
+  "Выберите миссию и выполните оценку. Изменение данных требует новой проверки.": {
+    "ru": "Выберите миссию и выполните оценку. Изменение данных требует новой проверки.",
+    "en": "Select a mission and inspect it. Changed evidence requires a fresh inspection."
+  },
+  "Сложность: {level} · индекс признаков {score}/{maximum}": {
+    "ru": "Сложность: {level} · индекс признаков {score}/{maximum}",
+    "en": "Complexity: {level} · feature index {score}/{maximum}"
+  },
+  "Индекс — локальная эвристика, а не вероятность успеха или истинная сложность.": {
+    "ru": "Индекс — локальная эвристика, а не вероятность успеха или истинная сложность.",
+    "en": "The index is a local heuristic, not a success probability or intrinsic complexity."
+  },
+  "Сохранённая конфигурация · текущий turn не меняется": {
+    "ru": "Сохранённая конфигурация · текущий turn не меняется",
+    "en": "Retained configuration · current turn is unchanged"
+  },
+  "Рекомендуемая конфигурация": {
+    "ru": "Рекомендуемая конфигурация",
+    "en": "Recommended configuration"
+  },
+  "Reasoning effort": {
+    "ru": "Уровень рассуждения",
+    "en": "Reasoning effort"
+  },
+  "Ручной выбор сохранён; автоматическая эскалация отключена.": {
+    "ru": "Ручной выбор сохранён; автоматическая эскалация отключена.",
+    "en": "Manual selection retained; automatic escalation disabled."
+  },
+  "Текущий предел effort: {effort}": {
+    "ru": "Текущий предел effort: {effort}",
+    "en": "Current effort ceiling: {effort}"
+  },
+  "Разрешено каталогом и политикой: {efforts}": {
+    "ru": "Разрешено каталогом и политикой: {efforts}",
+    "en": "Allowed by catalog and policy: {efforts}"
+  },
+  "История решения: {success} успешно / {failure} с ошибкой; минимум {minimum} наблюдений.": {
+    "ru": "История решения: {success} успешно / {failure} с ошибкой; минимум {minimum} наблюдений.",
+    "en": "Decision history: {success} successful / {failure} failed; minimum {minimum} observations."
+  },
+  "История изменила предпочтительный профиль после повторных проверенных ошибок.": {
+    "ru": "История изменила предпочтительный профиль после повторных проверенных ошибок.",
+    "en": "History changed the preferred profile after repeated validated failures."
+  },
+  "История не обосновывает изменение предпочтительного профиля.": {
+    "ru": "История не обосновывает изменение предпочтительного профиля.",
+    "en": "History does not justify changing the preferred profile."
+  },
+  "Нет достаточной истории для этого решения.": {
+    "ru": "Нет достаточной истории для этого решения.",
+    "en": "Insufficient history for this decision."
+  },
+  "Другие варианты по текущим проверкам: ": {
+    "ru": "Другие варианты по текущим проверкам: ",
+    "en": "Other options under current checks: "
+  },
+  "Нет допустимой конфигурации. Проверьте каталог и Model Policy.": {
+    "ru": "Нет допустимой конфигурации. Проверьте каталог и Model Policy.",
+    "en": "No admissible configuration. Check the catalog and Model Policy."
+  },
+  "Признаки оценки:": {
+    "ru": "Признаки оценки:",
+    "en": "Assessment signals:"
+  },
+  "Осталось попыток: {count}": {
+    "ru": "Осталось попыток: {count}",
+    "en": "Remaining attempts: {count}"
+  },
+  "Модель или effort запрещены текущим каталогом/политикой.": {
+    "ru": "Модель или effort запрещены текущим каталогом/политикой.",
+    "en": "Model or effort rejected by the current catalog/policy."
+  },
+  "Credit Policy блокирует отправку: ": {
+    "ru": "Credit Policy блокирует отправку: ",
+    "en": "Credit Policy blocks submission: "
+  },
+  "Лимиты блокируют отправку: ": {
+    "ru": "Лимиты блокируют отправку: ",
+    "en": "Limits block submission: "
+  },
+  "Бюджет попыток исчерпан.": {
+    "ru": "Бюджет попыток исчерпан.",
+    "en": "Attempt budget exhausted."
+  },
+  "Требуется отдельное подтверждение checkpoint.": {
+    "ru": "Требуется отдельное подтверждение checkpoint.",
+    "en": "Separate checkpoint consent is required."
+  },
+  "Ход активен или исход неизвестен; новая отправка запрещена.": {
+    "ru": "Ход активен или исход неизвестен; новая отправка запрещена.",
+    "en": "Turn active or outcome unknown; new submission prohibited."
+  },
+  "Миссия завершена; оценка не создаёт новую задачу.": {
+    "ru": "Миссия завершена; оценка не создаёт новую задачу.",
+    "en": "Mission terminal; inspection does not create a new task."
+  },
+  "Требуется независимое разрешение исполнения результата.": {
+    "ru": "Требуется независимое разрешение исполнения результата.",
+    "en": "Independent result execution approval is required."
+  },
+  "Очередь на паузе.": {
+    "ru": "Очередь на паузе.",
+    "en": "Queue paused."
+  },
+  "multiple explicit work steps": {
+    "ru": "Несколько явно заданных шагов работы",
+    "en": "multiple explicit work steps"
+  },
+  "cross-component or file dependencies": {
+    "ru": "Зависимости между компонентами или файлами",
+    "en": "cross-component or file dependencies"
+  },
+  "explicit result verification": {
+    "ru": "Явная проверка результата",
+    "en": "explicit result verification"
+  },
+  "requirements contain ambiguity": {
+    "ru": "Требования содержат неоднозначность",
+    "en": "requirements contain ambiguity"
+  },
+  "deep reasoning or trade-off analysis": {
+    "ru": "Глубокое рассуждение или анализ компромиссов",
+    "en": "deep reasoning or trade-off analysis"
+  },
+  "analysis input truncated; conservative floor": {
+    "ru": "Ввод для анализа ограничен; консервативная оценка сложности",
+    "en": "analysis input truncated; conservative floor"
+  },
+  "history adjustment after repeated validated failures": {
+    "ru": "Выбор изменён после повторных проверенных ошибок",
+    "en": "history adjustment after repeated validated failures"
+  },
+  "history does not justify changing the preferred profile": {
+    "ru": "История не обосновывает изменение предпочтительного профиля",
+    "en": "history does not justify changing the preferred profile"
+  },
+  "История отклонённого профиля {model} / {effort}: {success} успешно / {failure} с ошибкой.": {
+    "ru": "История отклонённого профиля {model} / {effort}: {success} успешно / {failure} с ошибкой.",
+    "en": "History of rejected profile {model} / {effort}: {success} successful / {failure} failed."
+  },
+  "Режим выбранной миссии: {mode}": {
+    "ru": "Режим выбранной миссии: {mode}",
+    "en": "Selected mission mode: {mode}"
+  },
+  "Сравнительные возможности неизвестны; использован default каталога или стабильный exact ID.": {
+    "ru": "Сравнительные возможности неизвестны; использован default каталога или стабильный exact ID.",
+    "en": "Comparative capability unknown; using the catalog default or a stable exact ID."
   }
 }

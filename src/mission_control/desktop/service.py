@@ -34,6 +34,7 @@ class DesktopService:
         self.changed=changed or (lambda:None)
         self.connection={'status':'disconnected','message':'Подключение ещё не проверено'}
         self.models=[];self.limits=inspect_limits(None);self.account={}
+        self._raw_limits=None;self._raw_limits_observed_at=None
         self.worker_task=None;self.closed=False;self._reviewed={};self._access={}
         self._emit_pending=False
         self.limits_observed_at=None;self._last_observation=None
@@ -138,14 +139,18 @@ class DesktopService:
             async with factory() as adapter:
                 self.account=await adapter.account()
                 self.models=[m for m in await adapter.models() if not m.get('hidden')]
-                self.limits=inspect_limits(await adapter.rate_limits())
+                from ..limits import sanitize_limits
+                self._raw_limits=sanitize_limits(await adapter.rate_limits())
+                self.limits=inspect_limits(self._raw_limits)
                 self.limits_observed_at=time.time()
+                self._raw_limits_observed_at=self.limits_observed_at
             auth=self.account.get('requiresOpenaiAuth') and not self.account.get('type')
             self.connection={'status':'auth_required' if auth else 'connected',
                              'message':'Войдите в Codex' if auth else 'Codex подключён'}
             self._record_limits(self.limits,self.limits_observed_at)
         except Exception as error:
             self.models=[];self.account={};self.limits=inspect_limits(None)
+            self._raw_limits=None;self._raw_limits_observed_at=None
             self.limits_observed_at=None
             self.connection={'status':'error','kind':'executable' if isinstance(error,CodexNotFound) else 'connection',
                              'message':safety.redact(str(error))}
@@ -320,11 +325,26 @@ class DesktopService:
                 roots=[]
             store=self.queue.journal()
             observations=store.load('gui-limit-history').get('observations',[]) if store.exists('gui-limit-history') else []
+            import hashlib,json
+            quality=store.load('history').get('qualityRecords',{}) if store.exists('history') else {}
+            history_revision=hashlib.sha256(json.dumps(quality,sort_keys=True).encode()).hexdigest()
             return safety.sanitize({'missions':jobs,'paused':data['paused'],'active':data['active'],
                 'workerRunning':self.worker_task is not None and not self.worker_task.done(),
                 'connection':deepcopy(self.connection),'models':deepcopy(self.models),'account':self.account,
                 'limits':limits,'limitsObservedAt':observed,'roots':roots,'preferences':self.preferences(),'limitHistory':observations,
+                'routingHistoryRevision':history_revision,
                 'portable':store.load('portable-import') if store.exists('portable-import') else None})
+
+    def inspect_route(self,identity):
+        """No adapter, worker, inference, history writes or mission mutation."""
+        from ..history import History
+        from ..route_inspection import inspect_mission
+        with self.queue.storage():
+            data=self.snapshot()
+            if not any(j['id']==identity for j in data['missions']):raise StateError('Mission no longer exists')
+            with state_lock(self.queue.journal().history_path):
+                history=History.load(self.queue.journal().history_path)
+            return inspect_mission(data,identity,history,self._raw_limits,self._raw_limits_observed_at)
 
     async def start(self):
         if self.closed:raise StateError('Application is shutting down')
