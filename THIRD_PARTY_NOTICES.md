@@ -1,51 +1,62 @@
 # Third-party notices
 
-The MIT License covers original Codex Mission Control code. It does not replace
-the licenses, copyright notices or attribution requirements of dependencies.
-The owner confirmed the right to license their own project code under MIT.
+Original Codex Mission Control code is MIT licensed. Dependency licenses remain
+independent. Source alpha is v0.7.0; Stage 15 candidate is 0.7.1, not a release.
 
-See the [dependency license table](docs/DEPENDENCIES.md) and machine-readable
-[inventory](docs/dependency-inventory.json) for 17 audited direct and transitive
-runtime, desktop, test and frozen-build components. Their license texts are preserved
-under `packaging/licenses/`. This Git repository distributes source and notices,
-not third-party wheels, DLLs, fonts, an interpreter or an installer.
+The frozen directory preserves exact nested wheel license files and CPython's full
+LICENSE.txt. `packaging/licenses/` adds Qt LGPL/GPL/exception texts, embedded Qt
+attributions, cryptography's Rust crate notices, OpenSSL and Inno notices.
+`packaging/license-sources.json` records license provenance;
+`packaging/source-distributions.json` records full upstream source archive URLs and
+SHA256 verified during the local audit. Archives stay outside this Git repository.
+Qt attribution and Rust crate lists deliberately retain a conservative upstream
+source/build superset, including platform-only and compile-time entries: their
+length is not a claim about how many components ship in Windows DLLs. Unused Mesa
+software OpenGL and image-codec plugins are excluded; SVG is retained.
 
 ## Qt and PySide6
 
-The desktop imports Qt Core, Gui and Widgets; tests also use QtTest. The declared
-dependency is PySide6-Essentials with shiboken6, audited at 6.12.0. The application
-does not import the GPL-only modules listed in [Qt licensing](https://doc.qt.io/qt-6/licensing.html).
-Use the LGPL-3.0 option where available. A future binary distributor must preserve
-notices, permit library replacement and debugging of modifications, provide the
-corresponding library sources as required, and inventory Qt's third-party components.
-Dynamic linking alone does not discharge every LGPL obligation.
+PySide6-Essentials/shiboken6 and Qt 6.12.0 use LGPL-3.0 where offered. The app uses
+Core/Gui/Widgets and transitively Network/Svg, not GPL-only Qt modules. Qt DLLs stay
+replaceable beside the EXE. Users may replace compatible LGPL libraries and debug
+those modifications. No app license or installer condition removes those rights.
+Qt's third-party attributions include their individual permissive/MPL terms.
+GPL texts and Qt exceptions are retained as upstream notices, not a relicensing
+of the MIT application. Before binary publication provide the exact corresponding
+Qt/PySide sources and build/configuration/replacement instructions by an appropriate
+LGPL distribution method; upstream links alone are not a source-delivery guarantee.
 
-Upstream sources (select the exact distributed version):
+## Python, cryptography and native runtime
 
-- https://code.qt.io/cgit/pyside/pyside-setup.git/
-- https://code.qt.io/cgit/qt/qtbase.git/
+The release runtime is official CPython 3.14.8 x64, with its complete PSF and bundled
+component notices. Source compatibility remains Python 3.12+. Its native DLL inputs
+are checked against the pinned official archive. cryptography 50.0.2 embeds OpenSSL
+4.0.3; CPython uses OpenSSL 3.5.9. Full upstream sources and checksum evidence were
+acquired. Rust crate notices include Unicode and Apache/LLVM exceptions where
+applicable, and the Rust standard library's MIT/Apache notices.
 
-## Cryptography and build tools
+Microsoft Distributable Code has component-specific conditions preserved verbatim
+from CPython's actual Windows LICENSE.txt in `packaging/INSTALLER_LICENSE.txt`.
+The installer presents these terms for acceptance. They apply only to Microsoft
+code, not Python, this MIT application or LGPL library modification/replacement.
+Do not remove Microsoft notices, imply endorsement, redistribute its code for
+non-Microsoft platforms, or use it in malicious/deceptive/unlawful programs.
 
-cryptography 50.0.2 is dual-licensed Apache-2.0 / BSD-3-Clause. Its wheels embed
-OpenSSL and Rust components with their own licenses; those need an exact inventory
-before binary distribution. [Upstream guidance](https://cryptography.io/en/latest/faq/#what-licenses-apply-to-cryptography).
+## Build and installer
 
-PyInstaller 6.22.0 uses GPL with its bootloader exception and Apache-2.0 for selected
-files. Its exception permits application distribution under another license while
-preserving dependency obligations. Standard community build hooks use GPL-2.0-or-later;
-runtime hooks use Apache-2.0. No hook implementation is copied into project code.
-See [PyInstaller licensing](https://pyinstaller.org/en/stable/license.html) and
-[community hook licensing](https://github.com/pyinstaller/pyinstaller-hooks-contrib/blob/master/LICENSE).
+PyInstaller 6.22.0 has a GPL bootloader exception permitting an independently
+licensed app; its bootloader zlib notice and hook licenses are retained. Inno Setup
+6.7.3 and embedded decoder/component notices are included. This product is made
+using RemObjects Pascal Script: https://www.remobjects.com/ps . Decoder notices
+preserve their original linking exceptions; they are not all labeled public domain.
+Git/Codex and Windows fonts are external and not redistributed. No third-party font
+or image pack is bundled.
 
-CPython and Inno Setup are separately obtained tools with their own licenses. Git
-and Codex are external programs. No third-party fonts or image packs are redistributed;
-the UI uses project drawing code, Qt style icons and fonts from the user's Windows.
+## Distribution remains a separate decision
 
-## Binary distribution is not approved
-
-The current audit identified no conflict for this MIT source distribution. It is
-not a completed binary license audit. Before any installer publication, inventory
-every included module and native dependency, retain all required notices, satisfy
-corresponding-source obligations, verify replaceable Qt libraries and test on a clean
-Windows machine. No GitHub Release or installer is published for this alpha.
+The PR contains source/notices only, no binary uploads. Before public installer
+release the owner must approve distribution, complete corresponding-source delivery
+and compatible-library replacement verification, and assess the unperformed
+independent clean-Windows test. The project EXE/installer are not Authenticode signed;
+SmartScreen may warn or block. CI smoke is not a clean consumer Windows certification.
+See [Stage 15 checklist](docs/STAGE15.md) and [build instructions](docs/BUILDING.md).

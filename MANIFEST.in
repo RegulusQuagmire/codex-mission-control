@@ -1,6 +1,13 @@
 include README.md LICENSE THIRD_PARTY_NOTICES.md ARCHITECTURE.md CHANGELOG.md ROADMAP.md CONTRIBUTING.md SECURITY.md
 include *.pyw *.vbs
-recursive-include tests *.py
 recursive-include docs *.md *.json *.png
-recursive-include packaging *.py *.ps1 *.spec *.iss *.txt
-recursive-include tools *.py
+recursive-include packaging *.py *.ps1 *.spec *.iss *.txt *.json
+recursive-include tools *.py *.ps1
+recursive-include tests *.py
+recursive-include .github/workflows *.yml
+prune .venv
+prune .build-venv
+prune .local
+prune build
+prune dist
+global-exclude *.pyc __pycache__ *.sqlite* *.db *.cmc *.pem *.key *.pfx *.p12 auth.json credentials.json cookies.txt .env .env.*

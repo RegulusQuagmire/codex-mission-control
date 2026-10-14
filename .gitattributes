@@ -2,4 +2,5 @@
 *.py text eol=lf
 *.md text eol=lf
 *.toml text eol=lf
-packaging/licenses/** -text
+# Preserve upstream license bytes, including CRLF and upstream final blank lines.
+packaging/licenses/** -text -whitespace

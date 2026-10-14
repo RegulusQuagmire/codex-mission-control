@@ -1,0 +1,319 @@
+{
+  "version": "6.7.3",
+  "download": "https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe",
+  "downloadSha256": "9c73c3bae7ed48d44112a0f48e66742c00090bdb5bef71d9d3c056c66e97b732",
+  "files": [
+    {
+      "path": "Compil32.exe",
+      "sha256": "f59e6adf0c2484e3c191a79d2ad02c7c5e4eb6a0e73763fc295f0c997a23ae73"
+    },
+    {
+      "path": "Default.isl",
+      "sha256": "42a5f6f7dbbddf26cc278f67db5d894235ce1d126a6856702e31bd02023a1316"
+    },
+    {
+      "path": "is7z.dll",
+      "sha256": "f97cda058bfe97a7e9ced5cde7018bbc26e35155c3c7405c6146808f8d06806d"
+    },
+    {
+      "path": "is7z.dll.issig",
+      "sha256": "42ac47dfccae85596984b121f5fad33faee6b56d6c50bfc89f31ea96bff7c1b4"
+    },
+    {
+      "path": "is7zxa.dll",
+      "sha256": "e3cef67858843c554100126f04932be327097777865e4eb82951dd97cdb28942"
+    },
+    {
+      "path": "is7zxa.dll.issig",
+      "sha256": "8a94c3247cf5e99143377c37adbe1d58798c44ada89871707aab7902a3287838"
+    },
+    {
+      "path": "is7zxr.dll",
+      "sha256": "728b368dc4f2831cc4d13291f46eeaf9f89b7e3a91356cf793c330e953b8e17b"
+    },
+    {
+      "path": "is7zxr.dll.issig",
+      "sha256": "209264d479698ea7e9aa375fa1f692cae01d79a6b023b75716c625a5b821c413"
+    },
+    {
+      "path": "isbunzip.dll",
+      "sha256": "31d04c1e4bfdfa34704c142fa98f80c0a3076e4b312d6ada57c4be9d9c7dcf26"
+    },
+    {
+      "path": "isbunzip.dll.issig",
+      "sha256": "d446db9995621893741d721434297311576269f1622f0bb103ba48b94b2fa744"
+    },
+    {
+      "path": "isbzip.dll",
+      "sha256": "8072e83385afc4a84006271a87a11fc0a22b149cbd77322669ca56c470d28ced"
+    },
+    {
+      "path": "isbzip.dll.issig",
+      "sha256": "145612af36209f29ec96669550e5eebca3d2b0240f2e888c35bd599559be9a4a"
+    },
+    {
+      "path": "ISCC.exe",
+      "sha256": "0a8757031b33777e4c9cbffee40f11a5062b36d25cbe144c1db73b6102b80ad7"
+    },
+    {
+      "path": "ISCmplr.dll",
+      "sha256": "85a1e3090d3a5b85319f001b7c8f9ecfad45f37eff030a67bbe29ef58b7aa2c3"
+    },
+    {
+      "path": "ISCmplr.dll.issig",
+      "sha256": "5c4b4b0fc6958934918c611eb509ecf63827a2bb36ce61fcb538fc5897b3a7ea"
+    },
+    {
+      "path": "ISetup-dark.chm",
+      "sha256": "9728d2ead794a7a8f9d264a72442506fd0a8dafc0212ca640f5baf19eb7e36f2"
+    },
+    {
+      "path": "ISetup.chm",
+      "sha256": "7abeabbd058a8ab445dad8341fffa11f319fdc16ae038f20b22b947a79affd2c"
+    },
+    {
+      "path": "isfaq.url",
+      "sha256": "f699ce64c194310524ca1dca5bfc996151619cc5c6731fbc5fa150b59c9d3c72"
+    },
+    {
+      "path": "islzma.dll",
+      "sha256": "8af307ce3738ab1d37cc7e76b2f76615e2045597d4367c3e40d52b5f2fbd353d"
+    },
+    {
+      "path": "islzma.dll.issig",
+      "sha256": "c49d4b2cc6499846118dc376c9c66081744531edc932ffa979698d68ec0662b2"
+    },
+    {
+      "path": "islzma32.exe",
+      "sha256": "fd977c3ac44c56997d2b4fd6647e97e2457c43991a6ae26a4b2252c0eabdfebb"
+    },
+    {
+      "path": "islzma32.exe.issig",
+      "sha256": "81039bd05963f8b02e1396a6fb5f3f7df7fd1ce1655f7a960f6c0b549489c562"
+    },
+    {
+      "path": "islzma64.exe",
+      "sha256": "87a50495aff580b78cad57906a765d3cf28ca508cfa95c24c1247c286ddf71b2"
+    },
+    {
+      "path": "islzma64.exe.issig",
+      "sha256": "e74ea022afb90bbff710d9952a1069767c970484b1be596771ae7d109932f716"
+    },
+    {
+      "path": "ISPP.dll",
+      "sha256": "bde04be7f4a55ca56afb6b06600d7cbe8326fac468ac3f2885b80eefb3ed2a7a"
+    },
+    {
+      "path": "ISPP.dll.issig",
+      "sha256": "5f66c7d86af3be12522f044541b747f293c8131268e16d27c622bfc14f7250c9"
+    },
+    {
+      "path": "ISPPBuiltins.iss",
+      "sha256": "bc765e1121a95dc602ca1248b484418cecc6db9d4b6f4dae58e9a2c35262527c"
+    },
+    {
+      "path": "isscint.dll",
+      "sha256": "ddd2748bc79122a67eed77f6039f6508245e0aa7f0fdbbfca99d1e922a1e8ce4"
+    },
+    {
+      "path": "isscint.dll.issig",
+      "sha256": "c54c30c27c503e86c70116ca9db840b0b799a0610fd8644dd53194a96afe7207"
+    },
+    {
+      "path": "ISSigTool.exe",
+      "sha256": "aea490d45665a88c0c832d25647d21c1b87962efedb25668caec05678e0fd7c6"
+    },
+    {
+      "path": "isunzlib.dll",
+      "sha256": "8287d0e287a66ee78537c8d1d98e426562b95c50f569b92cea9ce36a9fa57e64"
+    },
+    {
+      "path": "isunzlib.dll.issig",
+      "sha256": "0a26dffaa4b47edc9cf6c730bb0cb38dc12a3de94742256aa1c22603e1be9309"
+    },
+    {
+      "path": "iszlib.dll",
+      "sha256": "14c0d4a2a41572384f8309cdf03de5c6e7ed46bef64cce70d989b2665eff1a47"
+    },
+    {
+      "path": "iszlib.dll.issig",
+      "sha256": "f41ea7cc5f9604bfebba8d101bef7c3f28b9d7e8f4c5c99e71030a28682113f9"
+    },
+    {
+      "path": "Languages/Arabic.isl",
+      "sha256": "d621121eba68640cc9cb3e1e63593d9b5905c15ab6d1dcfa168df603f52e0cad"
+    },
+    {
+      "path": "Languages/Armenian.isl",
+      "sha256": "7b7eb4ee3e6494fdfedc2b2487fb6eec217dab734c077ae8a25ffc4a8430df3a"
+    },
+    {
+      "path": "Languages/BrazilianPortuguese.isl",
+      "sha256": "e7e5e3dbd0ddee4c5a1f502f3035e431a21f87e68cef9a0295680b63ed61200b"
+    },
+    {
+      "path": "Languages/Bulgarian.isl",
+      "sha256": "b224f7e1b32bc35d413024e68b4fdc100d38f37b1ac9730fdf00cb70195b21f7"
+    },
+    {
+      "path": "Languages/Catalan.isl",
+      "sha256": "086a53ee6272b194d8aa87aeddac17b7c3bad26929777760e1b00b32e1f9a16b"
+    },
+    {
+      "path": "Languages/Corsican.isl",
+      "sha256": "7f03fbcd9433f8c7ed95234d8093c3bade32c7fccd6506df793c12329f8b626a"
+    },
+    {
+      "path": "Languages/Czech.isl",
+      "sha256": "c3054bce85feb47ad22e42aae1715d2cebfdb34564f60427f92865dbbcf520d0"
+    },
+    {
+      "path": "Languages/Danish.isl",
+      "sha256": "b2a062c2e20b842d13d27d9484ea1b37e251b3e7cf8ad9b0def3dcda9afbd12d"
+    },
+    {
+      "path": "Languages/Dutch.isl",
+      "sha256": "5013549651ed72b109d912719b8486ce4a516fa7ee00bc77bdfb63358d745a4f"
+    },
+    {
+      "path": "Languages/Finnish.isl",
+      "sha256": "b30091443cc649dce095470765490fb5791fedf015d96a190e53236b874f9dfd"
+    },
+    {
+      "path": "Languages/French.isl",
+      "sha256": "145bf4ea34eaa79c52e4fcb77ce3eee9720b0d424c69458cb99592bc52121fba"
+    },
+    {
+      "path": "Languages/German.isl",
+      "sha256": "f016f4a957de8c59e8db2da788357b4c923cecadca6f0c6eab404fb28015cac9"
+    },
+    {
+      "path": "Languages/Hebrew.isl",
+      "sha256": "d0e340afaeedb50567cb71f4d793d78aed869ca63ce9fc4abf7631c4a3eff459"
+    },
+    {
+      "path": "Languages/Hungarian.isl",
+      "sha256": "fc7d177354586d834aa2039e4896181b32ca7085c40aaeedbee3c456a2cdc6a9"
+    },
+    {
+      "path": "Languages/Italian.isl",
+      "sha256": "18034c57f1133682b1b2e95afa327f232cdcf41bf1a44bc2b5aab1f8d3332a77"
+    },
+    {
+      "path": "Languages/Japanese.isl",
+      "sha256": "d5450537bb128112347bf86a4bdc3a4be0605414df0bc4fc90f55aaef1ba369b"
+    },
+    {
+      "path": "Languages/Korean.isl",
+      "sha256": "cb56d6ea5c082bcf6b4acc1ae4c303ba91f662b1d0bfe05e4d3902c38c41e02a"
+    },
+    {
+      "path": "Languages/Norwegian.isl",
+      "sha256": "19119d601d4c40c0b42a2a99c932d5fc65521c67a01d3803780af2620cdfd5ff"
+    },
+    {
+      "path": "Languages/Polish.isl",
+      "sha256": "593f14b249afb49d38976816a4a3c73e13e354d1698f9f98d584c1c6c6a18e48"
+    },
+    {
+      "path": "Languages/Portuguese.isl",
+      "sha256": "ac71fbbf66cd9db15bf675f4a7def2b918b8b2ec783ca485f6c87683fc81d644"
+    },
+    {
+      "path": "Languages/Russian.isl",
+      "sha256": "81981fe6cfef7f3b2f744beac1494f4d2b29cea69c96a08d1c0a6b79dc0ed8f2"
+    },
+    {
+      "path": "Languages/Slovak.isl",
+      "sha256": "268b523811052d151a5a50df400df4fdd20eacf87f41500e3639693d6e429bd0"
+    },
+    {
+      "path": "Languages/Slovenian.isl",
+      "sha256": "c50817284822262070f79006659e5bd6991417477b193ce3f2f44d9a32e131be"
+    },
+    {
+      "path": "Languages/Spanish.isl",
+      "sha256": "c61ee6287d6a10db186cce43b556422e0a8bc631784132468a9cebca4f2df0d5"
+    },
+    {
+      "path": "Languages/Swedish.isl",
+      "sha256": "a4fd431e2956c2d76c45fbdc97a55380ae00956854d8233934da03505b390531"
+    },
+    {
+      "path": "Languages/Tamil.isl",
+      "sha256": "3a45f281e9676dec66c1fef7678778f9c9528065c06cfac7ffa469d131f5a91a"
+    },
+    {
+      "path": "Languages/Thai.isl",
+      "sha256": "cdc0a1af65ac503ee1f0b5ef9d14d81b8c173ba80a3ce78ba86e15e285a149b3"
+    },
+    {
+      "path": "Languages/Turkish.isl",
+      "sha256": "21f69297a1d3d9a3407acd2ac43908cf20786fff8ef1c1d98cb9ea544a7a4c2c"
+    },
+    {
+      "path": "Languages/Ukrainian.isl",
+      "sha256": "fa3e7841017229d14b3b59417fa9aa860a71ce1f683f3fdafdd5bf266a47c668"
+    },
+    {
+      "path": "license.txt",
+      "sha256": "2e5346868c2a18434489824e11d65c3031620f792fefc415d05f19cd441abf5c"
+    },
+    {
+      "path": "Setup.e32",
+      "sha256": "a80d75ba8d8c336050c37f7707de8bb017cc93597329e0ea18d474156b3e0da5"
+    },
+    {
+      "path": "Setup.e32.issig",
+      "sha256": "09dbd2458c48a249eeda5ae2705a4315192cc96ecd1b233136f11799d5dff175"
+    },
+    {
+      "path": "SetupClassicIcon.ico",
+      "sha256": "fa07ed17dff186a5b46c16861158bf3a36b67d84ff7a7bf9a58eaad28143d827"
+    },
+    {
+      "path": "SetupCustomStyle.e32",
+      "sha256": "9675a2a5c78c66b691cc80270031da42bebad5725fbf60853cb4e5f90251bd5e"
+    },
+    {
+      "path": "SetupCustomStyle.e32.issig",
+      "sha256": "cb513ff3e47a9c52341620ebd787e968f9c71fd012c6836e78fb039013e8256f"
+    },
+    {
+      "path": "SetupLdr.e32",
+      "sha256": "5475964893adbb33ccc420ad4d88bbdff27dfaaca7580cd6058ea2798893490d"
+    },
+    {
+      "path": "SetupLdr.e32.issig",
+      "sha256": "12441b9477b0363993f06e325767f8b925a20e895e364fa8460754ee39ca6c08"
+    },
+    {
+      "path": "SetupLdr.e64",
+      "sha256": "e38f2140e6bfd86c6ddc69c98f46475080c75fd5ee4be701ceff9c842c6c5019"
+    },
+    {
+      "path": "SetupLdr.e64.issig",
+      "sha256": "c1bf1b83271edbcb28117fd012edef89be710bfd8ad32c1edee057d664b989be"
+    },
+    {
+      "path": "whatsnew.htm",
+      "sha256": "4e98f32f91bfaae8c2934152734fe58f4feb5dd6cc1c2b419dc51ead1a3bbbf5"
+    },
+    {
+      "path": "WizClassicImage-IS.bmp",
+      "sha256": "1b73df0b89a2943f34582cf81c2d8ed7b1ce4cfb54d86ce58ebd6dd0e1e05f5d"
+    },
+    {
+      "path": "WizClassicImage.bmp",
+      "sha256": "d148dc2569e9abc4b4da650b1920ef1ffdc10bbd6bc2e20a97ce44b1f9f78aea"
+    },
+    {
+      "path": "WizClassicSmallImage-IS.bmp",
+      "sha256": "ae94cd61179bc1869d0082b1fa8c189f8487d106712b48a2a6c6a035d370bfb4"
+    },
+    {
+      "path": "WizClassicSmallImage.bmp",
+      "sha256": "a7e560d419e85daf80cce980baa124ef7c73197d0f51a59a19f1866ee8edfe8c"
+    }
+  ]
+}

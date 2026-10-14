@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codex-mission-control"
-version = "0.7.0"
+version = "0.7.1"
 description = "Windows controller for Codex App Server with smart routing and durable quota waiting"
 readme = "README.md"
 license = "MIT"
