@@ -235,7 +235,8 @@ class ManagedRunner:
     def _decision(self, data):
         value = data["decision"]
         return Decision(value["model"], value["effort"], assess(Task(**data["task"])),
-                        Mode(data["mode"]), value["reason"], value["profileSource"], value["limitsKnown"])
+                        Mode(data["mode"]), value["reason"], value["profileSource"], value["limitsKnown"],
+                        value.get('history'),value.get('constraints'),tuple(value.get('alternatives',())))
 
     def _router(self, data):
         with state_lock(Path(data["historyPath"])):
@@ -551,8 +552,8 @@ class ManagedRunner:
         history_path=Path(data["historyPath"])
         with state_lock(history_path):
             history=History.load(history_path)
-            history.record_once(data["jobId"]+":"+attempt["turnId"],decision["model"],decision["effort"],
-                                decision["complexity"],result["passed"])
+            history.record_validated(History.turn_observation(data['threadId'],attempt["turnId"]),decision["model"],decision["effort"],
+                                     decision["complexity"],result,legacy_observation=data['jobId']+':'+attempt['turnId'])
             history.save(history_path)
         attempt["validation"]=result
         attempt["effectiveConfiguration"]=configured

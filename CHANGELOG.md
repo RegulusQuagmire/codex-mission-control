@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — local Stage 13 Intelligent Router 2.0
+
+- Explainable bounded multi-signal complexity assessment; conservative explicit risk floors.
+- Provenance-aware validated history with minimum samples, smoothing and durable deduplication.
+- Read-only RU/EN mission inspection, current gates/alternatives and stale-preview protection.
+- Preserve Manual, ceilings, automaticEnabled, Stage 11 consent, approvals and submission guards.
+- No version bump, new dependencies, SQL migration, inference classifier or release.
+
 ## Unreleased — Stage 11 + Evolution integration
 
 - Bounded steer/interrupt controller, durable checkpoints and exact-turn continuation.

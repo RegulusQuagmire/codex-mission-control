@@ -76,7 +76,7 @@ class BackendBridge(QThread):
         try:
             # Explicit public API allowlist, never arbitrary getattr from UI data.
             methods={name:getattr(self.service,name) for name in (
-                'refresh_connection','probe_connection','complete_setup','add','edit','access_review','approve_access','control',
+                'refresh_connection','probe_connection','complete_setup','inspect_route','add','edit','access_review','approve_access','control',
                 'review_result','approve_result','result','configure_roots','save_preferences','export_portable','import_portable','inspect_update','start','resume_queue','resume_mission','shutdown')}
             if action not in methods:raise ValueError('Unknown desktop action')
             result=methods[action](**values)

@@ -80,53 +80,14 @@ class Assessment:
     complexity: Complexity
     reasons: tuple[str, ...]
     estimated_files: int
+    score: int = 0
+    features: tuple[tuple[str, int], ...] = ()
 
 
 def assess(task: Task) -> Assessment:
-    text = task.text.casefold()
-    reasons = []
-    simple = task.operation in {"text", "docs", "format"} or bool(re.search(
-        r"format|опечат|документац|readme|переведи|translate|short text|коротк.*текст", text))
-    level = Complexity.LOW if simple else Complexity.MEDIUM
-    reasons.append("scoped text/document operation" if simple else "general task; conservative baseline")
-    if task.operation == "architecture" or re.search(r"архитектур|architecture|distributed system|распределённ", text):
-        level = Complexity.CRITICAL
-        reasons.append("architecture or system-wide dependencies")
-    if task.operation == "debug" or re.search(r"debug|deadlock|race condition|отлад|гонк[аи]|multi.file|нескольк.*модул", text):
-        level = max(level, Complexity.HIGH)
-        reasons.append("debugging or cross-module changes")
-    if task.operation in {"code", "refactor"}:
-        level = max(level, Complexity.MEDIUM)
-        reasons.append("implementation/refactoring")
-    files = task.estimated_files
-    if files is None:
-        files = len(set(re.findall(r"[\w./\\-]+\.(?:py|tsx?|jsx?|rs|go|cs|cpp|md|sql|json)\b", text)))
-    if files >= 6:
-        level = max(level, Complexity.HIGH)
-        reasons.append(f"estimated files={files}")
-    elif files >= 2:
-        level = max(level, Complexity.MEDIUM)
-        reasons.append(f"estimated files={files}")
-    risk = task.risk
-    if risk == "auto":
-        if re.search(r"drop\s+table|удал.*(?:таблиц|баз[уы])|delete.*database|destructive migration", text):
-            risk = "critical"
-        elif re.search(r"security|безопасност|authentication|авторизац|database migration|миграци.*баз", text):
-            risk = "high"
-    if risk in {"medium", "high", "critical"}:
-        level = max(level, {"medium": Complexity.MEDIUM, "high": Complexity.HIGH,
-                            "critical": Complexity.CRITICAL}[risk])
-        reasons.append(f"risk={risk}")
-    if task.previous_errors:
-        level = max(level, Complexity.HIGH if task.previous_errors >= 2 else Complexity.MEDIUM)
-        reasons.append(f"previous errors={task.previous_errors}")
-    if len(text) > 3000:
-        level = max(level, Complexity.HIGH)
-        reasons.append("long specification")
-    elif len(text) > 1000:
-        level = max(level, Complexity.MEDIUM)
-        reasons.append("substantial specification")
-    return Assessment(level, tuple(reasons), files)
+    from .task_analysis import analyze
+    level,reasons,files,score,features=analyze(task)
+    return Assessment(Complexity(level),reasons,files,score,features)
 
 
 @dataclass(frozen=True)
@@ -138,6 +99,9 @@ class Decision:
     reason: str
     profile_source: str
     limits_known: bool
+    history_evidence: dict | None = None
+    constraints: dict | None = None
+    alternatives: tuple[dict, ...] = ()
 
     def to_dict(self):
         return {"model": self.model, "effort": self.effort,
@@ -145,7 +109,11 @@ class Decision:
                 "estimatedFiles": self.assessment.estimated_files,
                 "signals": list(self.assessment.reasons), "mode": self.mode.value,
                 "reason": self.reason, "profileSource": self.profile_source,
-                "limitsKnown": self.limits_known}
+                "limitsKnown": self.limits_known,
+                "analysis": {"version":2,"score":self.assessment.score,"maximum":15,
+                             "features":dict(self.assessment.features)},
+                "history":self.history_evidence or {}, "constraints":self.constraints or {},
+                "alternatives":list(self.alternatives)}
 
 
 def _limit_status(limits: dict | None, model: str) -> tuple[bool, bool, bool]:
@@ -199,20 +167,21 @@ class SmartRouter:
         policy = current_policy()
         candidates = []
         seen = set()
+        identities=[entry.get("model") for entry in models]
         for entry in models:
             model = entry.get("model")
             efforts = [effort for effort in EFFORTS if effort in {
                 option.get("reasoningEffort") for option in entry.get("supportedReasoningEfforts", [])}]
             efforts = allowed_efforts(model, efforts, automatic=True, policy=policy)
             if (not isinstance(model, str) or not model or model in seen
-                    or entry.get("hidden") or model in self.excluded or not efforts
+                    or identities.count(model)!=1 or entry.get("hidden") or model in self.excluded or not efforts
                     or ("inputModalities" in entry and "text" not in entry["inputModalities"])):
                 continue
             seen.add(model)
             blocked, pressure, known = _limit_status(limits, model)
             if not blocked:
                 candidates.append((entry, efforts, pressure, known))
-        return candidates
+        return sorted(candidates, key=lambda item:item[0]["model"])
 
     @staticmethod
     def _effort(efforts, target):
@@ -234,6 +203,7 @@ class SmartRouter:
         candidates = self._models(models, limits)
         if not candidates:
             raise RoutingBlocked("No visible model with supported text effort and available limits")
+        admissible = list(candidates)
         ranked = [candidate for candidate in candidates if candidate[0]["model"] in self.profiles]
         source = self.profile_source
         if ranked:
@@ -260,7 +230,7 @@ class SmartRouter:
                 model = candidate[0]["model"]
                 effort = self._effort(candidate[1], target)
                 success, failure = self.history.count(model, effort, assessment.complexity)
-                unreliable = int(failure >= 2 and failure > success)
+                unreliable = int(self.history.evidence(model,effort,assessment.complexity)["unreliable"])
                 return unreliable, self.profiles[model], not candidate[0].get("isDefault", False), model
             selected = min(candidates, key=score)
         else:
@@ -268,7 +238,8 @@ class SmartRouter:
             selected = next((candidate for candidate in candidates if candidate[0].get("isDefault")), candidates[0])
         model = selected[0]["model"]
         effort = self._effort(selected[1], target)
-        success, failure = self.history.count(model, effort, assessment.complexity)
+        selected_evidence=self.history.evidence(model,effort,assessment.complexity)
+        success,failure=selected_evidence['success'],selected_evidence['failure']
         reason = (f"{assessment.complexity.name}: chose {model} / {effort} ({mode.value}); "
                   + "; ".join(assessment.reasons)
                   + f"; observed validated outcomes={success} success/{failure} failure")
@@ -277,7 +248,24 @@ class SmartRouter:
             reason += "; known limit usage >=85%, conserve easy-task resources"
         if not selected[3]:
             reason += "; applicable limits unknown"
-        return Decision(model, effort, assessment, mode, reason, source, selected[3])
+        from .model_policy import current_policy
+        evidence=self.history.evidence(model,effort,assessment.complexity)
+        compared=[{"model":item[0]["model"],"effort":self._effort(item[1],target),
+                   **self.history.evidence(item[0]["model"],self._effort(item[1],target),assessment.complexity)}
+                  for item in candidates]
+        base=min(candidates,key=lambda item:(self.profiles.get(item[0]["model"],0),not item[0].get("isDefault",False),item[0]["model"]))
+        adjusted=bool(ranked and base[0]["model"]!=model)
+        evidence={**evidence,"model":model,"effort":effort,"compared":compared,"adjusted":adjusted}
+        reason += "; history adjustment after repeated validated failures" if adjusted else "; history does not justify changing the preferred profile"
+        rule=current_policy().get(model,{})
+        constraints={"effortCeiling":rule.get("maxEffort","ultra"),
+                     "automaticEnabled":rule.get("automaticEnabled",True),
+                     "supportedEfforts":list(selected[1]),"targetEffort":target,
+                     "effortClamped":effort!=target}
+        alternatives=tuple({"model":item[0]["model"],"effort":self._effort(item[1],target),
+                            "rankKnown":item[0]["model"] in self.profiles}
+                           for item in admissible if item[0]["model"]!=model)
+        return Decision(model,effort,assessment,mode,reason,source,selected[3],evidence,constraints,alternatives)
 
     def escalate(self, previous: Decision, models: list[dict],
                  visited: set[tuple[str, str]], *, effort_raised: bool = False,
@@ -290,7 +278,7 @@ class SmartRouter:
             higher = [effort for effort in current[1] if EFFORTS.index(effort) > EFFORTS.index(previous.effort)
                       and (previous.model, effort) not in visited]
             if higher:
-                return replace(previous, effort=higher[0], reason=previous.reason +
+                return self._escalated(previous,current,higher[0],candidates,
                                f"; validation failed: raise effort to {higher[0]}")
         rank = self.profiles.get(previous.model)
         if rank is None:
@@ -299,8 +287,20 @@ class SmartRouter:
         for item in sorted(stronger, key=lambda item: self.profiles[item[0]["model"]]):
             effort = self._effort(item[1], previous.effort)
             if (item[0]["model"], effort) not in visited:
-                return replace(previous, model=item[0]["model"], effort=effort,
-                               profile_source=self.profile_source,
-                               limits_known=item[3], reason=previous.reason +
+                return self._escalated(previous,item,effort,candidates,
                                f"; validation failed: switch to stronger profile {item[0]['model']}")
         return None
+
+    def _escalated(self,previous,selected,effort,candidates,reason):
+        from .model_policy import current_policy
+        model=selected[0]['model'];rule=current_policy().get(model,{})
+        evidence={**self.history.evidence(model,effort,previous.assessment.complexity),
+                  'model':model,'effort':effort,'adjusted':False}
+        constraints={'effortCeiling':rule.get('maxEffort','ultra'),
+            'automaticEnabled':rule.get('automaticEnabled',True),'supportedEfforts':list(selected[1]),
+            'targetEffort':effort,'effortClamped':False}
+        alternatives=tuple({'model':item[0]['model'],'effort':self._effort(item[1],effort),
+            'rankKnown':item[0]['model'] in self.profiles} for item in candidates if item[0]['model']!=model)
+        return replace(previous,model=model,effort=effort,profile_source=self.profile_source,
+            limits_known=selected[3],reason=previous.reason+reason,history_evidence=evidence,
+            constraints=constraints,alternatives=alternatives)

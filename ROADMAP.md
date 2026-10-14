@@ -16,7 +16,8 @@ and Limit & Credit Manager 2.0. Source distribution only.
 ## Planned
 
 - Stage 12: Concept C Evolution is already published; preserve its design in integration.
-- Stage 13: Intelligent Router 2.0.
+- Stage 13: Intelligent Router 2.0 is implemented in the local development branch;
+  see [algorithm and offline QA](docs/STAGE13.md). Source publication requires owner approval.
 - Stage 14: Project Orchestration.
 - Further security review, compatibility testing and preparation for a mature release.
 

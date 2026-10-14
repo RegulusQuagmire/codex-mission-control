@@ -167,8 +167,8 @@ class RoutedExecutor:
                 attempt["validation"] = {"passed": result.passed, "kind": result.kind,
                                          "feedback": result.feedback[:2048]}
                 attempt["phase"] = "validated"
-                self.router.history.record(decision.model, decision.effort,
-                                           decision.assessment.complexity, result.passed)
+                self.router.history.record_validated(History.turn_observation(data['threadId'],outcome['turnId']),decision.model,
+                    decision.effort,decision.assessment.complexity,{'passed':result.passed,'kind':result.kind})
                 if self.history_path is not None:
                     self.router.history.save(self.history_path)
                 data["updatedAt"] = timestamp()
