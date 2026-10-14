@@ -27,6 +27,9 @@ def access_text(job):
             tr('Проверки:\n')+join_text('\n\n', (c['name'] + ' (' + message_text({'test':'Тест','build':'Сборка','lint':'Анализ кода','runtime':'Проверка выполнения'}.get(c['kind'],c['kind'])) + ', ' + display(c['timeout']) + tr(' с)\nАргументы: ') + display(c['argv']) for c in spec['commands'])),
             tr('Необходимы изменения: ')+(tr('Да') if spec.get('requireChanges',True) else tr('Нет')),
             tr('Обязательное содержимое файлов: ')+display(spec.get('contains', {}))]
+    elif job['type']=='planning':
+        lines += [tr('Файлы контекста:\n')+join_text('\n',spec['inputFiles']),
+                  tr('Только черновик плана. Запись файлов и исполнение команд не разрешены.')]
     else:lines.append(tr('Точный ожидаемый ответ:\n')+job['expected'])
     lines.append(tr('Оценка задачи: ')+display({k: v for k, v in task.items() if k != 'text'}))
     return join_text('\n\n', lines)

@@ -46,6 +46,33 @@ class DesktopService:
             if not self.queue.journal().exists('queue'):self.queue._save(data)
         return self.snapshot()
 
+    def create_project(self,identity,title,goal,project,input_files):
+        from ..orchestration import Projects
+        prefs=self.preferences()
+        result=Projects(self.queue).create(identity,title,goal,project,input_files,
+            mode=prefs['mode'],max_attempts=prefs['maxAttempts'])
+        self.changed();return result
+
+    def request_project_plan(self,identity):
+        from ..orchestration import Projects
+        result=Projects(self.queue).request(identity);self.changed();return result
+
+    def project_view(self,identity):
+        from ..orchestration import Projects
+        return Projects(self.queue).view(identity)
+
+    def save_project_plan(self,identity,plan,revision):
+        from ..orchestration import Projects
+        result=Projects(self.queue).save(identity,plan,revision);self.changed();return result
+
+    def review_project_plan(self,identity):
+        from ..orchestration import Projects
+        return Projects(self.queue).review(identity)
+
+    def confirm_project_plan(self,identity,review_id,acknowledge=False):
+        from ..orchestration import Projects
+        result=Projects(self.queue).confirm(identity,review_id,acknowledge);self.changed();return result
+
     def preferences(self):
         store=self.queue.journal()
         saved=store.load('gui-preferences') if store.exists('gui-preferences') else {}
@@ -199,6 +226,9 @@ class DesktopService:
         if definition['id']!=identity:raise StateError('Mission identity cannot change')
         with state_lock(self.queue.path),self.queue.storage():
             data=self.queue.read();old=data['missions'][identity]
+            from ..orchestration import Projects
+            if any(identity in p['members'] or identity==p['planner'] for p in Projects(self.queue).read()['projects'].values()):
+                raise StateError('Edit the project plan and confirm its new scope before changing generated missions')
             if data['active']==identity or old['status'] not in {'pending','paused'} or old['dispatchStarted']:
                 raise StateError('Only undispatched pending missions can be edited')
             keys=('title','type','task','project','criteria','expected','mode','manual','maxAttempts','turnTimeout','policy','dependsOn','priority')
@@ -328,7 +358,11 @@ class DesktopService:
             import hashlib,json
             quality=store.load('history').get('qualityRecords',{}) if store.exists('history') else {}
             history_revision=hashlib.sha256(json.dumps(quality,sort_keys=True).encode()).hexdigest()
+            from ..orchestration import Projects
+            projects=Projects(self.queue)
+            project_views=[projects.view(key) for key in projects.read()['projects']]
             return safety.sanitize({'missions':jobs,'paused':data['paused'],'active':data['active'],
+                'projects':project_views,
                 'workerRunning':self.worker_task is not None and not self.worker_task.done(),
                 'connection':deepcopy(self.connection),'models':deepcopy(self.models),'account':self.account,
                 'limits':limits,'limitsObservedAt':observed,'roots':roots,'preferences':self.preferences(),'limitHistory':observations,

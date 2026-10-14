@@ -100,7 +100,6 @@ def prepare(root,spec,overlays=()):
     source=Path(spec['project']);data={};total=0
     for name in files(spec):
         value=read_bytes(safe_path(source,name))
-        if value is None and name in spec['inputFiles']:raise StateError('Required input file missing')
         check_file(name,value)
         total+=len(value or b'');data[name]=value
     if total>MAX_CONTEXT:raise StateError('Project context exceeds bounded limit')
@@ -117,6 +116,7 @@ def prepare(root,spec,overlays=()):
                 raise StateError('Conflicting verified dependency edits; resolve explicitly')
             data[name]=value
     total=sum(len(b or b'') for b in data.values())
+    if any(data[name] is None for name in spec['inputFiles']):raise StateError('Required input file missing from source and verified dependencies')
     if total>MAX_CONTEXT:raise StateError('Dependency context exceeds limit')
     for name,value in data.items():
         if value is not None:
