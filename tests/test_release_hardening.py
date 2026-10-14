@@ -137,14 +137,14 @@ def test_source_smoke_captures_consistent_english_light_settings(tmp_path):
 
 
 def test_build_lock_pins_every_wheel_and_has_hashes():
-    lines = [line for line in (ROOT/'packaging/requirements-build.txt').read_text().splitlines()
+    lines = [line for line in (ROOT/'packaging/requirements-build.txt').read_text(encoding='utf-8').splitlines()
              if line and not line.startswith('#')]
     assert len(lines) == 12
     assert all('==' in line and '--hash=sha256:' in line for line in lines)
 
 
 def test_installer_has_localized_tasks_and_license():
-    source = (ROOT/'packaging/installer.iss').read_text()
+    source = (ROOT/'packaging/installer.iss').read_text(encoding='utf-8')
     assert '[CustomMessages]' in source and 'english.DesktopIcon=' in source
     assert 'LicenseFile=' in source
     assert 'AppVersion' in source and 'UninstallDelete' not in source.replace('; No UninstallDelete', '')
@@ -158,9 +158,9 @@ def test_retired_runtime_plugins_fail_closed(tmp_path,name):
 def test_release_metadata_and_component_terms_are_consistent():
     import tomllib
     from mission_control import __version__
-    version=tomllib.loads((ROOT/'pyproject.toml').read_text())['project']['version']
+    version=tomllib.loads((ROOT/'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
     assert version==__version__=='0.7.1'
-    assert '#define AppVersion "'+version+'"' in (ROOT/'packaging/installer.iss').read_text()
+    assert '#define AppVersion "'+version+'"' in (ROOT/'packaging/installer.iss').read_text(encoding='utf-8')
     terms=(ROOT/'packaging/INSTALLER_LICENSE.txt').read_text(encoding='utf-8')
     assert 'These restrictions apply only to the Microsoft Distributable Code' in terms
     assert 'MIT License' in terms and 'LGPL' in terms
