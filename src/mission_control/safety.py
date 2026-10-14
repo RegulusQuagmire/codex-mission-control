@@ -62,7 +62,7 @@ def check_file(name,value):
 
 
 def fingerprint(job):
-    keys=('id','title','type','task','project','criteria','expected','mode','manual','maxAttempts','turnTimeout','policy','dependsOn')
+    keys=('id','title','type','task','project','criteria','expected','mode','manual','maxAttempts','turnTimeout','policy','dependsOn','orchestration')
     data={k:job[k] for k in keys if k in job}
     return hashlib.sha256(json.dumps(data,sort_keys=True,ensure_ascii=False,allow_nan=False).encode()).hexdigest()
 
@@ -124,6 +124,8 @@ def allowed(q,job):
 
 def authorize(q,job):
     allowed(q,job)
+    from .orchestration import authorize_membership
+    authorize_membership(q,job)
     store=q.journal()
     if not store.exists('approvals') or store.load('approvals').get(job['id'])!=fingerprint(job):
         raise StateError('Explicit approval of this mission and exact check commands is required')

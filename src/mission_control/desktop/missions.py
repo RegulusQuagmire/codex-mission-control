@@ -150,6 +150,7 @@ class MissionsPage(QWidget):
         self.cancel_button=button(tr('Отменить'),self.cancel)
         self.cancel_button.setProperty('fluentAppearance','danger')
         layout.addLayout(row(self.add_button,self.edit_button,self.access_button))
+        layout.addWidget(button(tr('Проекты'),self.projects))
         self.search=QLineEdit();self.search.setPlaceholderText(tr('Поиск по названию, ID или проекту'))
         self.search.setAccessibleName(tr('Поиск по названию, ID или проекту'))
         self.status_filter=QComboBox();self.status_filter.addItem(tr('Все состояния'),'all')
@@ -178,6 +179,10 @@ class MissionsPage(QWidget):
         self.summary=label(tr('Выберите задание'),'muted');layout.addWidget(self.summary);self.update_actions()
         self.selection_detail=plain();self.selection_detail.setMaximumHeight(140);self.selection_detail.setMinimumHeight(88)
         self.selection_detail.setAccessibleName(tr('Выбранная миссия'));layout.addWidget(self.selection_detail)
+    def projects(self):
+        from .projects import ProjectsDialog
+        dialog=ProjectsDialog(self.bridge,self.data,self);dialog.setAttribute(Qt.WA_DeleteOnClose);dialog.open()
+
     def refilter(self,*_):
         if self.data:self.update_data(self.data)
     def resizeEvent(self,event):
@@ -213,7 +218,8 @@ class MissionsPage(QWidget):
     def update_actions(self):
         job=self.selected();status=job['status'] if job else None
         terminal=status in {'completed','cancelled','failed','needs_attention'}
-        self.edit_button.setEnabled(bool(job and status in {'pending','paused'} and not job['dispatchStarted']))
+        self.edit_button.setEnabled(bool(job and job.get('type')!='planning' and not job.get('orchestration')
+            and status in {'pending','paused'} and not job['dispatchStarted']))
         self.access_button.setEnabled(bool(job and not self.data.get('active')))
         self.pause_button.setEnabled(bool(job and not terminal and status!='paused'))
         from .presentation import checkpoint_pending
@@ -236,6 +242,8 @@ class MissionsPage(QWidget):
         if hasattr(self,'selection_detail'):
             self.selection_detail.setPlainText(mission_details(job,self.data.get('missions',[])))
     def edit(self,job=None):
+        if job and (job.get('type')=='planning' or job.get('orchestration')):
+            self.projects();return
         dialog=MissionDialog(self.data.get('missions',[]),self.data.get('preferences',{}),self.data.get('models',[]),self,existing=job)
         if dialog.exec()==QDialog.Accepted:
             if job:self.bridge.request('edit',identity=job['id'],definition=dialog.definition())

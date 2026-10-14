@@ -70,6 +70,12 @@ class MissionQueue:
         if not isinstance(job,dict) or not isinstance(job.get('id'),str) or not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,63}',job['id']):
             raise StateError('Mission ID must be lowercase letters/digits/hyphen/underscore, at most 64')
         validator.relative(job['id'])
+        if 'orchestration' in job:
+            from .orchestration import identity
+            marker=job['orchestration']
+            if not isinstance(marker,dict) or set(marker)!={'projectId','revision'} or type(marker['revision']) is not int or marker['revision']<1:
+                raise StateError('Invalid project membership marker')
+            identity(marker['projectId'])
         if not isinstance(job.get('title'),str) or not job['title'].strip():raise StateError('Mission title required')
         Task(**job['task']);Mode(job.get('mode','balanced'))
         if 'manual' in job:
@@ -88,7 +94,11 @@ class MissionQueue:
         elif job.get('type')=='project':
             validator.check_spec(job['criteria'],check_workspace=check_workspace)
             if Path(job['criteria']['project']).resolve()!=Path(job['project']).resolve():raise StateError('Criteria project differs')
-        else:raise StateError('Mission type must be text or project')
+        elif job.get('type')=='planning':
+            from .orchestration import check_context
+            check_context(job['criteria'],check_workspace=check_workspace)
+            if Path(job['criteria']['project']).resolve()!=Path(job['project']).resolve():raise StateError('Planning project differs')
+        else:raise StateError('Mission type must be text, project or planning')
 
     def read(self):
         with self.storage():return self._read()
@@ -261,6 +271,9 @@ class QueueWorker:
                     job=deepcopy(job)
                 path=Path(job['runPath']);cwd=Path(job['project']) if job['type']=='text' else path.parent/'workspace'
                 runner_cls=ManagedRunner if job['type']=='text' else ProjectRunner
+                if job['type']=='planning':
+                    from .orchestration import PlanRunner
+                    runner_cls=PlanRunner
                 runner=runner_cls(self.factory_for_cwd(cwd),path,cwd=cwd,clock=self.clock,sleep=self.sleep,
                                   stop_requested=lambda:self._stop_requested(identity))
                 if job['type']=='project':runner.require_checkpoint=self.queue.path.suffix=='.sqlite3'
@@ -282,6 +295,7 @@ class QueueWorker:
                         if 'manual' in job:options['manual']=job['manual']
                         task=Task(**job['task'])
                         if job['type']=='text':result=await runner.run(task,expected=job['expected'],**options)
+                        elif job['type']=='planning':result=await runner.run_plan(task,job['criteria'],**options)
                         else:result=await runner.run_project(task,job['criteria'],overlays=self._dependencies(data,job),**options)
                 except (StateError,OSError,ValueError):
                     with state_lock(self.queue.path):

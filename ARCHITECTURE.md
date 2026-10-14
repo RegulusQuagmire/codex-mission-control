@@ -67,3 +67,19 @@ Stage 10 records remain readable; downgrade of active Stage 11 journals is not p
 No atomic server-side expected-idle guarantee exists after the final read. External
 concurrent control of the same thread remains unsupported. No Stage 13, real inference,
 publication, release or installer belongs to this integration.
+
+## Reviewed project orchestration (local Stage 14)
+
+`orchestration.py` stores protected project drafts and materializes owner-confirmed
+DAGs into MissionQueue atomically. PlanRunner is a ManagedRunner validation strategy,
+dispatched by the same QueueWorker and adapter. It reads only selected context and
+validates inert structured proposals; it neither executes commands nor grants rights.
+Generated member fingerprints bind the project marker and confirmed scope. Missing
+project state, stale reviews and changed authority fail closed. Separate access,
+exact-result execution and exact-turn continuation approvals remain mandatory.
+
+Project progress derives from queue/run evidence, never a second scheduler. Verified
+ancestor deltas reuse validator.prepare; newly created required inputs must exist in
+the source or a verified dependency. Draft corrections revoke old scope/access; any
+current or historical dispatch evidence prevents graph replacement. Version-1
+protected documents reuse the existing SQL schema. See docs/STAGE14.md.

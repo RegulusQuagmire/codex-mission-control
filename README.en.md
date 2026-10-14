@@ -1,8 +1,12 @@
 # Codex Mission Control
 
-The local Stage 13 branch adds Intelligent Router 2.0: explainable task assessment,
+Stage 13 in main adds Intelligent Router 2.0: explainable task assessment,
 conservative validated history and mission inspection without inference.
 [Algorithm, workflow and limits](docs/STAGE13.md). The public version is unchanged.
+
+The local Stage 14 branch adds projects from an overall goal: draft plans, file and
+command review, dependencies, progress and separate approvals.
+[Workflow, authority boundaries and limits](docs/STAGE14.md). Stage 14 is not merged into main.
 
 Stage 12 **Concept C Evolution** adds an action-first Dashboard,
 Router inspection, mission search and explicit quota freshness.

@@ -3950,5 +3950,341 @@
   "Сравнительные возможности неизвестны; использован default каталога или стабильный exact ID.": {
     "ru": "Сравнительные возможности неизвестны; использован default каталога или стабильный exact ID.",
     "en": "Comparative capability unknown; using the catalog default or a stable exact ID."
+  },
+  "Новый проект": {
+    "ru": "Новый проект",
+    "en": "New project"
+  },
+  "Создать проект": {
+    "ru": "Создать проект",
+    "en": "Create project"
+  },
+  "Цель проекта": {
+    "ru": "Цель проекта",
+    "en": "Project goal"
+  },
+  "Выбрать проект": {
+    "ru": "Выбрать проект",
+    "en": "Select project"
+  },
+  "План проекта": {
+    "ru": "План проекта",
+    "en": "Project plan"
+  },
+  "Черновик": {
+    "ru": "Черновик",
+    "en": "Draft"
+  },
+  "Этап": {
+    "ru": "Этап",
+    "en": "Stage"
+  },
+  "Общая очередь": {
+    "ru": "Общая очередь",
+    "en": "Shared queue"
+  },
+  "Открыть миссии": {
+    "ru": "Открыть миссии",
+    "en": "Open missions"
+  },
+  "Причина блокировки": {
+    "ru": "Причина блокировки",
+    "en": "Blocked because"
+  },
+  "Файлы и границы доступа": {
+    "ru": "Файлы и границы доступа",
+    "en": "Files and access boundaries"
+  },
+  "Предложенные команды": {
+    "ru": "Предложенные команды",
+    "en": "Proposed commands"
+  },
+  "Раздельные подтверждения": {
+    "ru": "Раздельные подтверждения",
+    "en": "Separate approvals"
+  },
+  "Подтвердить план и полномочия": {
+    "ru": "Подтвердить план и полномочия",
+    "en": "Confirm plan and scope"
+  },
+  "Подтвердить план и создать миссии": {
+    "ru": "Подтвердить план и создать миссии",
+    "en": "Confirm plan and create missions"
+  },
+  "Черновик Codex · проверка владельцем": {
+    "ru": "Черновик Codex · проверка владельцем",
+    "en": "Codex draft · owner review"
+  },
+  "Просмотрите каждый раздел. Команды пока не разрешены к исполнению.": {
+    "ru": "Просмотрите каждый раздел. Команды пока не разрешены к исполнению.",
+    "en": "Review every section. Commands are not approved for execution yet."
+  },
+  "Содержимое плана проекта": {
+    "ru": "Содержимое плана проекта",
+    "en": "Project plan contents"
+  },
+  "План изменился. Откройте новый просмотр.": {
+    "ru": "План изменился. Откройте новый просмотр.",
+    "en": "The plan changed. Open a fresh review."
+  },
+  "Я проверил план, каждый путь и команду и подтверждаю эти полномочия миссий": {
+    "ru": "Я проверил план, каждый путь и команду и подтверждаю эти полномочия миссий",
+    "en": "I reviewed the plan, every path and command, and confirm this mission scope"
+  },
+  "Подтверждение создаст миссии с указанными файлами и командами. Оно не расширяет разрешённые корни, не запускает очередь и не разрешает исполнение кода. Для каждой миссии нужны отдельное разрешение доступа и подтверждение конкретного результата.": {
+    "ru": "Подтверждение создаст миссии с указанными файлами и командами. Оно не расширяет разрешённые корни, не запускает очередь и не разрешает исполнение кода. Для каждой миссии нужны отдельное разрешение доступа и подтверждение конкретного результата.",
+    "en": "Confirmation creates missions with the listed files and commands. It does not expand allowed roots, start the queue or approve code execution. Each mission needs separate access approval and approval of its exact result."
+  },
+  "Относительные пути, по одному на строку. Только выбранные файлы попадут в контекст планирования.": {
+    "ru": "Относительные пути, по одному на строку. Только выбранные файлы попадут в контекст планирования.",
+    "en": "Relative paths, one per line. Only selected files enter the planning context."
+  },
+  "Создание проекта сохраняет цель. Планирование требует отдельного разрешения миссии и запуска общей очереди.": {
+    "ru": "Создание проекта сохраняет цель. Планирование требует отдельного разрешения миссии и запуска общей очереди.",
+    "en": "Creating a project saves its goal. Planning requires separate mission access approval and starting the shared queue."
+  },
+  "Проекты · план, зависимости и прогресс": {
+    "ru": "Проекты · план, зависимости и прогресс",
+    "en": "Projects · plan, dependencies and progress"
+  },
+  "Запросить черновик Codex": {
+    "ru": "Запросить черновик Codex",
+    "en": "Request a Codex draft"
+  },
+  "Просмотреть план и полномочия": {
+    "ru": "Просмотреть план и полномочия",
+    "en": "Review plan and scope"
+  },
+  "Разрешения выбранной миссии": {
+    "ru": "Разрешения выбранной миссии",
+    "en": "Selected mission permissions"
+  },
+  "Черновик плана JSON": {
+    "ru": "Черновик плана JSON",
+    "en": "Draft plan JSON"
+  },
+  "Сохранить изменения черновика": {
+    "ru": "Сохранить изменения черновика",
+    "en": "Save draft changes"
+  },
+  "Изменение утверждённого плана отзывает его полномочия. Отправленные миссии менять нельзя.": {
+    "ru": "Изменение утверждённого плана отзывает его полномочия. Отправленные миссии менять нельзя.",
+    "en": "Changing a confirmed plan revokes its scope approval. Dispatched missions cannot be changed."
+  },
+  "Создайте проект из общей цели.": {
+    "ru": "Создайте проект из общей цели.",
+    "en": "Create a project from an overall goal."
+  },
+  "Нужно разрешение доступа": {
+    "ru": "Нужно разрешение доступа",
+    "en": "Access approval required"
+  },
+  "План ещё не получен. Черновик можно запросить или вставить в JSON-редактор.": {
+    "ru": "План ещё не получен. Черновик можно запросить или вставить в JSON-редактор.",
+    "en": "No plan yet. Request a draft or paste one into the JSON editor."
+  },
+  "Только черновик плана. Запись файлов и исполнение команд не разрешены.": {
+    "ru": "Только черновик плана. Запись файлов и исполнение команд не разрешены.",
+    "en": "Draft planning only. Writing files and executing commands are not allowed."
+  },
+  "Папка проекта": {
+    "ru": "Папка проекта",
+    "en": "Project folder"
+  },
+  "Approved project mission changed; renewed plan confirmation required": {
+    "ru": "Утверждённая миссия изменена. Подтвердите план заново.",
+    "en": "Approved project mission changed; renewed plan confirmation required"
+  },
+  "Bounded command proposals required": {
+    "ru": "Нужно от 1 до 16 предложенных команд.",
+    "en": "Bounded command proposals required"
+  },
+  "Bounded explicit file lists required": {
+    "ru": "Укажите от 1 до 128 файлов в каждом списке.",
+    "en": "Bounded explicit file lists required"
+  },
+  "Bounded planning input list required": {
+    "ru": "Контекст планирования ограничен 128 файлами.",
+    "en": "Bounded planning input list required"
+  },
+  "Current draft required": {
+    "ru": "Для просмотра нужен актуальный черновик.",
+    "en": "Current draft required"
+  },
+  "Dispatched project is immutable; create a new reviewed project": {
+    "ru": "В проекте есть отправленные миссии. Создайте новый проект с новым подтверждением.",
+    "en": "Dispatched project is immutable; create a new reviewed project"
+  },
+  "Duplicate JSON plan key": {
+    "ru": "Повторяющийся ключ JSON в плане.",
+    "en": "Duplicate JSON plan key"
+  },
+  "Duplicate plan mission ID": {
+    "ru": "ID миссии в плане повторяется.",
+    "en": "Duplicate plan mission ID"
+  },
+  "Duplicate planning paths": {
+    "ru": "Пути контекста планирования повторяются.",
+    "en": "Duplicate planning paths"
+  },
+  "Edit the project plan and confirm its new scope before changing generated missions": {
+    "ru": "Измените план проекта и повторно подтвердите полномочия перед изменением созданных миссий.",
+    "en": "Edit the project plan and confirm its new scope before changing generated missions"
+  },
+  "Existing absolute planning root required": {
+    "ru": "Нужен абсолютный путь к существующей папке планирования.",
+    "en": "Existing absolute planning root required"
+  },
+  "Explicit owner confirmation of every proposed file and command required": {
+    "ru": "Владелец должен явно подтвердить каждый предложенный файл и команду.",
+    "en": "Explicit owner confirmation of every proposed file and command required"
+  },
+  "External dependencies retain this project; preserve the graph": {
+    "ru": "На проект ссылаются другие миссии. Сохраните существующий граф.",
+    "en": "External dependencies retain this project; preserve the graph"
+  },
+  "Invalid JSON project plan": {
+    "ru": "Некорректный JSON плана проекта.",
+    "en": "Invalid JSON project plan"
+  },
+  "Invalid project journal": {
+    "ru": "Некорректный журнал проекта. Требуется проверка сохранённых данных.",
+    "en": "Invalid project journal"
+  },
+  "Invalid project membership marker": {
+    "ru": "Некорректная связь миссии с проектом.",
+    "en": "Invalid project membership marker"
+  },
+  "Missing plan dependency": {
+    "ru": "Зависимость плана не найдена.",
+    "en": "Missing plan dependency"
+  },
+  "Mission type must be text, project or planning": {
+    "ru": "Тип миссии должен быть text, project или planning.",
+    "en": "Mission type must be text, project or planning"
+  },
+  "Nonempty bounded plan text required": {
+    "ru": "Нужен непустой текст плана длиной не более 16000 символов.",
+    "en": "Nonempty bounded plan text required"
+  },
+  "Plan dependency cycle": {
+    "ru": "В зависимостях плана обнаружен цикл.",
+    "en": "Plan dependency cycle"
+  },
+  "Plan exceeds size limit": {
+    "ru": "План превышает ограничение размера.",
+    "en": "Plan exceeds size limit"
+  },
+  "Plan requires 1..32 missions": {
+    "ru": "План должен содержать от 1 до 32 миссий.",
+    "en": "Plan requires 1..32 missions"
+  },
+  "Plan requires version=1 and missions only": {
+    "ru": "План должен содержать только version=1 и missions.",
+    "en": "Plan requires version=1 and missions only"
+  },
+  "Planning already requested; inspect existing evidence": {
+    "ru": "Планирование уже запрошено. Просмотрите сохранённую миссию.",
+    "en": "Planning already requested; inspect existing evidence"
+  },
+  "Planning context changed": {
+    "ru": "Контекст планирования изменился. Требуется проверка.",
+    "en": "Planning context changed"
+  },
+  "Planning context exceeds limit": {
+    "ru": "Контекст планирования превышает ограничение размера.",
+    "en": "Planning context exceeds limit"
+  },
+  "Planning context requires only project and inputFiles": {
+    "ru": "Контекст планирования содержит только project и inputFiles.",
+    "en": "Planning context requires only project and inputFiles"
+  },
+  "Planning input missing": {
+    "ru": "Файл контекста планирования отсутствует.",
+    "en": "Planning input missing"
+  },
+  "Planning is unresolved; preserve its evidence first": {
+    "ru": "Планирование ещё не завершено. Сначала разберите сохранённое состояние.",
+    "en": "Planning is unresolved; preserve its evidence first"
+  },
+  "Planning mission ID exists": {
+    "ru": "ID миссии планирования уже существует.",
+    "en": "Planning mission ID exists"
+  },
+  "Planning project differs": {
+    "ru": "Папка планирования не совпадает с папкой миссии.",
+    "en": "Planning project differs"
+  },
+  "Planning run exists; resume saved evidence": {
+    "ru": "Планирование уже начато. Продолжите сохранённую миссию.",
+    "en": "Planning run exists; resume saved evidence"
+  },
+  "Planning workspace differs": {
+    "ru": "Рабочая копия планирования не совпадает с сохранённой.",
+    "en": "Planning workspace differs"
+  },
+  "Project ID already exists": {
+    "ru": "ID проекта уже существует.",
+    "en": "Project ID already exists"
+  },
+  "Project authority changed; review the plan again": {
+    "ru": "Полномочия проекта изменились. Просмотрите план заново.",
+    "en": "Project authority changed; review the plan again"
+  },
+  "Project journal missing; restore saved evidence before execution": {
+    "ru": "Журнал проекта отсутствует. Восстановите сохранённые данные перед выполнением.",
+    "en": "Project journal missing; restore saved evidence before execution"
+  },
+  "Project mission ID already exists": {
+    "ru": "ID миссии проекта уже существует.",
+    "en": "Project mission ID already exists"
+  },
+  "Project mission membership missing; restore saved evidence": {
+    "ru": "Связь миссии с проектом отсутствует. Восстановите сохранённые данные.",
+    "en": "Project mission membership missing; restore saved evidence"
+  },
+  "Project mission missing; cannot infer progress": {
+    "ru": "Миссия проекта отсутствует. Прогресс нельзя считать известным.",
+    "en": "Project mission missing; cannot infer progress"
+  },
+  "Project plan changed or already confirmed; review again": {
+    "ru": "План изменился или уже подтверждён. Просмотрите его заново.",
+    "en": "Project plan changed or already confirmed; review again"
+  },
+  "Project revision changed; review again": {
+    "ru": "Ревизия проекта изменилась. Просмотрите её заново.",
+    "en": "Project revision changed; review again"
+  },
+  "Project/plan IDs must be lowercase letters/digits/hyphen, at most 24": {
+    "ru": "ID проекта и миссии плана: строчные латинские буквы, цифры, дефис или подчёркивание, до 24 символов.",
+    "en": "Project/plan IDs must be lowercase letters/digits/hyphen, at most 24"
+  },
+  "Proposed commands cannot carry approvals or unknown fields": {
+    "ru": "Предложенные команды не могут содержать approvals или неизвестные поля.",
+    "en": "Proposed commands cannot carry approvals or unknown fields"
+  },
+  "Unique plan dependencies required": {
+    "ru": "Зависимости плана должны быть уникальны.",
+    "en": "Unique plan dependencies required"
+  },
+  "Unknown/missing plan fields; plans cannot supply runtime state or permissions": {
+    "ru": "Неизвестные или отсутствующие поля плана. План не может задавать состояние выполнения или разрешения.",
+    "en": "Unknown/missing plan fields; plans cannot supply runtime state or permissions"
+  },
+  "Required input file missing from source and verified dependencies": {
+    "ru": "Файл контекста отсутствует и в проекте, и в проверенных зависимостях.",
+    "en": "Required input file missing from source and verified dependencies"
+  },
+  "Mission no longer exists": {
+    "ru": "Миссия больше не существует.",
+    "en": "Mission no longer exists"
+  },
+  "План подтверждён": {
+    "ru": "План подтверждён",
+    "en": "Plan confirmed"
+  },
+  "Draft already exists; review or edit it before creating another project": {
+    "en": "Draft already exists; review or edit it before creating another project",
+    "ru": "Черновик уже существует. Просмотрите или измените его; новое планирование требует нового проекта."
   }
 }
