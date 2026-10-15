@@ -23,5 +23,15 @@
     "path": "packaging/licenses/InnoSetup/LICENSE.txt",
     "url": "https://raw.githubusercontent.com/jrsoftware/issrc/is-6_7_3/license.txt",
     "sha256": "2e5346868c2a18434489824e11d65c3031620f792fefc415d05f19cd441abf5c"
+  },
+  {
+    "path": "packaging/licenses/QtTranslations/BSD-3-Clause.txt",
+    "url": "https://raw.githubusercontent.com/qt/qttranslations/v6.12.0/LICENSES/BSD-3-Clause.txt",
+    "sha256": "9f0490f18656c6f2435bd14f603ef0c96434d1825615363dce43abb42ed1dcce"
+  },
+  {
+    "path": "packaging/licenses/QtTranslations/licenseRule.json",
+    "url": "https://raw.githubusercontent.com/qt/qttranslations/v6.12.0/licenseRule.json",
+    "sha256": "0087aedb53430fb236602d1965834ff1c902e905b672b759a22ce9665f8a836c"
   }
 ]

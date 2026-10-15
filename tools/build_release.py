@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tomllib
 from release_audit import environment, audit, clean_environment
+from sqlite_release import verify as verify_sqlite
 
 
 def write_json(path, value):
@@ -20,10 +21,12 @@ def main():
     parser.add_argument('--iscc', type=Path, required=True)
     parser.add_argument('--wheelhouse', type=Path, required=True)
     parser.add_argument('--runtime-archive',type=Path,required=True)
+    parser.add_argument('--sqlite-archive',type=Path,required=True)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     output = args.output.resolve()
     receipt = environment(root,args.wheelhouse,args.runtime_archive)
+    receipt['sqlite'] = verify_sqlite(root,args.sqlite_archive)[0]
     compiler = args.iscc.resolve(strict=True)
     if compiler.name.lower()!='iscc.exe': raise ValueError('Select the pinned ISCC.exe compiler')
     toolchain=json.loads((root/'packaging/inno-toolchain.json').read_text())
@@ -50,7 +53,8 @@ def main():
     sys.pycache_prefix=str(audit_cache)
     env = clean_environment(Path(sys.base_prefix),cache)
     env.update(CMC_BUILD_WHEELHOUSE=str(args.wheelhouse.resolve()),
-               CMC_BUILD_RUNTIME_ARCHIVE=str(args.runtime_archive.resolve()))
+               CMC_BUILD_RUNTIME_ARCHIVE=str(args.runtime_archive.resolve()),
+               CMC_BUILD_SQLITE_ARCHIVE=str(args.sqlite_archive.resolve()))
     subprocess.run([sys.executable, '-m', 'PyInstaller', '--clean', '--noconfirm',
                     '--distpath',str(output/'dist'),'--workpath',str(output/'build'),
                     str(root/'packaging/MissionControl.spec')],cwd=root,env=env,check=True)

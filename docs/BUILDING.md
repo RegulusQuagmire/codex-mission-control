@@ -14,8 +14,8 @@ From PowerShell, choose fresh output directories outside the checkout:
 ```powershell
 ./tools/bootstrap_release.ps1 -Output ../release-tools
 $tools = Get-Content ../release-tools/tools.json -Raw | ConvertFrom-Json
-& $tools.python tools/build_release.py --output ../candidate-a --iscc $tools.iscc --wheelhouse $tools.wheelhouse --runtime-archive $tools.runtimeArchive
-& $tools.python tools/build_release.py --output ../candidate-b --iscc $tools.iscc --wheelhouse $tools.wheelhouse --runtime-archive $tools.runtimeArchive
+& $tools.python tools/build_release.py --output ../candidate-a --iscc $tools.iscc --wheelhouse $tools.wheelhouse --runtime-archive $tools.runtimeArchive --sqlite-archive $tools.sqliteArchive
+& $tools.python tools/build_release.py --output ../candidate-b --iscc $tools.iscc --wheelhouse $tools.wheelhouse --runtime-archive $tools.runtimeArchive --sqlite-archive $tools.sqliteArchive
 ./tools/windows_release_smoke.ps1 -Candidate ../candidate-a -QaPython .venv/Scripts/python.exe -BuildPython $tools.python -Iscc $tools.iscc -Output ../lifecycle
 ```
 
@@ -27,8 +27,11 @@ itself never downloads tools, installs the app, signs or publishes artifacts.
 
 The builder compares actual installed runtime files with the verified official ZIP
 and installed wheel files with exact downloaded wheels. PATH/Qt/Python module
-injections are removed. Every native input must belong to a verified wheel or the
-verified CPython runtime. `native-inputs.json` preserves relative provenance.
+injections are removed. Every native input must belong to a verified wheel, the
+verified CPython runtime or the separately authenticated SQLite 3.54.0 archive.
+The original Python runtime is unchanged; exactly one collected sqlite3.dll is
+replaced in a fresh build directory. Frozen QA checks the actually loaded DLL,
+version, source ID and SHA256. `native-inputs.json` preserves relative provenance.
 `build-receipt.json` records source/tool hashes; `bundle-manifest.json` lists each
 payload file and archived Python module; `artifacts.json` records final hashes.
 Bytecode caches, work directories and output directories must be fresh. Fixed hash
@@ -58,4 +61,6 @@ the sdist does not pretend to contain repository history or vendor source archiv
 
 Native logs/work files can contain developer paths and stay outside public artifacts.
 EXE/installer remain unsigned. No installer is published by this workflow. See
-[Stage 15 checklist](STAGE15.md) for independent clean-Windows and distribution gates.
+[Stage 15 checklist](STAGE15.md) for limitations and distribution review.
+An unavailable independent clean-Windows system is a disclosed limitation, not
+an automatic release blocker. See [source delivery and replacement](LIBRARY_SOURCES.md).

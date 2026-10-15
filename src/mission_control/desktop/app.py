@@ -47,6 +47,11 @@ def main():
         window._first_snapshot=False
         report={'version':__version__,'frozen':bool(getattr(sys,'frozen',False)),
                 'qtPlatform':app.platformName(),'errors':[]}
+        from .runtime_qa import sqlite_runtime, loaded_library
+        try:
+            report['sqlite']=sqlite_runtime()
+            if sys.platform=='win32':report['qtCore']=loaded_library('Qt6Core.dll')
+        except Exception as error:report['errors'].append(redact(str(error)))
         finished=False
         def finish():
             nonlocal finished

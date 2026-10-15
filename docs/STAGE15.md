@@ -1,8 +1,8 @@
-# Stage 15 вЂ” local release hardening
+# Stage 15 — local release hardening
 
-Stage 14 is merged through PR #5. Stage 15 is local development, not a new public
-version or approval to distribute an installer. Public alpha remains 0.7.0; the unpublished candidate is 0.7.1.
-The execution path, SQL schema, Model/Credit Policy and Stage 11вЂ“14 approvals remain.
+Stage 11–15 are merged into main; release 0.7.1 preparation is a separate local
+branch. No installer/Release is published without explicit owner authorization.
+The execution path, SQL schema, Model/Credit Policy and Stage 11–14 approvals remain.
 
 ## Local candidate and evidence
 
@@ -46,28 +46,28 @@ All use synthetic DPAPI/SQLite state; no generated commands execute. This is not
 clean-machine installation.
 
 Before testing the production AppId, verify no real installation exists. Do not
-override an existing application or rely on an unknown registry read. Standard
-installer QA remains part of clean-machine testing below.
+override an existing application or rely on an unknown registry read. The available QA uses
+isolated registration and paths; normal production registration is not overwritten.
 
-## Required clean Windows operator check
+## Optional independent clean Windows coverage (not available)
 
-Use a disposable Windows 10 2004+ x64 / Windows 11 VM without Python, Qt, Git, Codex
-or developer PATH entries. No credentials, production projects or host writable
-folders may be shared. Copy the reviewed candidate and manifest into the VM.
+No independent clean Windows system is available. Do not request a VM or another
+computer. If independent coverage becomes available in the future, its suggested
+checks below use synthetic data only; no credentials/projects may be shared.
 
 1. Verify SHA256 before launch. Install as a standard user, RU and EN; ensure no UAC
    elevation, unexpected services, scheduled tasks, startup entries or network fetch.
 2. Test normal first launch and wizard without Codex, then missing/authentication
    diagnostics with an explicitly authorized Codex installation. No inference.
-3. Inspect RU/EN, Dark/Light, 800Г—600, 960Г—740 and 1920Г—1080, OS DPI 100/125/150/200%,
+3. Inspect RU/EN, Dark/Light, 800×600, 960×740 and 1920×1080, OS DPI 100/125/150/200%,
    keyboard navigation, reduced motion and long warnings. Save native screenshots.
 4. Repeat repair and upgrade from a separately reviewed previous binary, preserving
    synthetic SQLite/DPAPI state, roots, independent approvals and checkpoint consent.
    Never downgrade active new-format state. Verify no automatic queue execution.
 5. Uninstall via Windows; verify shortcuts/program files gone, projects/data retained.
-   Snapshot/revert the VM; do not use real accounts or export protected user state.
+   Do not use real accounts or export protected user state.
 
-Absence of an available VM/Sandbox is reported as **not tested**, never a pass.
+Absence of independent clean Windows is reported as **not tested**, never a pass.
 Host smoke testing without developer PATH is useful but does not replace this matrix.
 
 ## License/distribution gate
@@ -92,11 +92,13 @@ replacement. Retaining notices and upstream links alone does not complete delive
 - [ ] Independent clean Windows without Python/developer tools: **NOT TESTED**. Owner
   has no disposable Windows system/VM or budget; no paid test service is proposed.
 - [ ] Authenticode signature: **ABSENT**. SmartScreen/reputation warnings remain.
-- [ ] Corresponding-source delivery/build configuration and modified-library
-  replacement verified for the exact binary being distributed.
+- [ ] Corresponding-source companion includes exact libraries, translation sources
+  and build scripts/configuration; modified-library smoke checked for final candidate.
 - [ ] Explicit owner authorization for public installer/Release distribution.
 
-These gates block public installer release, not the source PR. The free standard
+Missing independent clean Windows and signing are disclosed risks, not automatic
+release blockers under the owner’s decision. Actual missing license/source
+obligations and explicit publication authorization remain separate gates. The free standard
 public Windows GitHub Actions runner adds install/upgrade/run/uninstall smoke but
 contains development tools and is not an independent clean consumer Windows test.
 The workflow uploads no installer artifacts and has read-only repository permissions.

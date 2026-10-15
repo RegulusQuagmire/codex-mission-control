@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "scope": "Exact upstream sources acquired locally; no source archives or binaries published by this PR. Qt attribution and Rust crate lists are conservative source/build supersets, not counts of shipped components.",
+  "scope": "Exact upstream source archives for companion release delivery; Qt/Rust lists include build-source supersets, not counts of shipped modules.",
   "sources": [
     {
       "path": "cryptography-50.0.2.tar.gz",
@@ -71,6 +71,36 @@
       "sha256": "325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9",
       "checksumUrl": "https://github.com/openssl/openssl/releases/download/openssl-4.0.3/openssl-4.0.3.tar.gz.sha256",
       "upstreamChecksumMatched": true
+    },
+    {
+      "path": "qt5-6.12.0.tar.gz",
+      "sha256": "167449f1963e899ef6502330b8791f0e971fb81fdeb560b15af19abd53c15552",
+      "bytes": 661623,
+      "url": "https://codeload.github.com/qt/qt5/tar.gz/refs/tags/v6.12.0",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "qttranslations-6.12.0.tar.gz",
+      "sha256": "8be0626ad9c84b09a64ab521e5049bbd009f1335c2283c996954736c7e71484d",
+      "bytes": 3235312,
+      "url": "https://codeload.github.com/qt/qttranslations/tar.gz/refs/tags/v6.12.0",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "qttools-6.12.0.tar.gz",
+      "sha256": "eff0ab495ca82147052ed7a2e92cc222a6171ae28f7d0a11aa867054139092cf",
+      "bytes": 13662274,
+      "url": "https://codeload.github.com/qt/qttools/tar.gz/refs/tags/v6.12.0",
+      "acquiredAndHashed": true
+    },
+    {
+      "file": "sqlite-src-3540000.zip",
+      "url": "https://sqlite.org/2026/sqlite-src-3540000.zip",
+      "sha3_256": "a5c29342ca185abcda332448fbb27c536661245be27e20199b46c49099b0e15e",
+      "sha256": "8847659821e0c5116bd14a94644c82ba932b2d9a05ac81af2e34af814aad7c58",
+      "bytes": 14881448,
+      "path": "sqlite-src-3540000.zip",
+      "acquiredAndHashed": true
     }
   ],
   "rustCrates": [

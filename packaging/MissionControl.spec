@@ -7,9 +7,13 @@ from PyInstaller.config import CONF
 root = Path(SPECPATH).parent
 sys.path.insert(0,str(root/'tools'))
 from release_audit import binary_provenance, wheel_owners
+from sqlite_release import replace as replace_sqlite
 notices=[(str(root/'LICENSE'),'.'),(str(root/'THIRD_PARTY_NOTICES.md'),'.'),
          (str(root/'docs/RELEASE.md'),'docs'),(str(root/'docs/FIRST_RUN.md'),'docs'),
          (str(root/'docs/FIRST_RUN.en.md'),'docs'),(str(root/'packaging/licenses'),'licenses/third-party')]
+notices += [(str(root/'docs/LIBRARY_SOURCES.md'),'docs'),
+            (str(root/'docs/RELEASE_0.7.1.md'),'docs'),
+            (str(root/'packaging/sqlite-runtime.json'),'.')]
 notices.append((str(root/'packaging/INSTALLER_LICENSE.txt'),'.'))
 notices.append((str(root/'packaging/source-distributions.json'),'.'))
 notices.append((str(root/'src/mission_control/desktop/translations.json'),'mission_control/desktop'))
@@ -37,7 +41,10 @@ a.binaries=[item for item in a.binaries if Path(item[0]).name.lower() not in {'i
 # viewing feature is present. Keep SVG/style support; omit unused codec plugins.
 a.binaries=[item for item in a.binaries if Path(item[0]).name.lower()!='opengl32sw.dll'
             and ('/imageformats/' not in item[0].replace('\\','/').lower() or Path(item[0]).name.lower()=='qsvg.dll')]
-provenance=binary_provenance(a.binaries,Path(sys.base_prefix),wheel_owners(root,Path(os.environ['CMC_BUILD_WHEELHOUSE']),Path(os.environ['CMC_BUILD_RUNTIME_ARCHIVE'])))
+owners=wheel_owners(root,Path(os.environ['CMC_BUILD_WHEELHOUSE']),Path(os.environ['CMC_BUILD_RUNTIME_ARCHIVE']))
+a.binaries,sqlite_owners=replace_sqlite(a.binaries,root,Path(os.environ['CMC_BUILD_SQLITE_ARCHIVE']),Path(CONF['workpath'])/'sqlite-runtime')
+owners.update(sqlite_owners)
+provenance=binary_provenance(a.binaries,Path(sys.base_prefix),owners)
 (Path(CONF['workpath'])/'native-inputs.json').write_text(json.dumps(provenance,indent=2)+'\n')
 pyz = PYZ(a.pure)
 exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name='MissionControl',

@@ -1,7 +1,7 @@
 # Third-party notices
 
 Original Codex Mission Control code is MIT licensed. Dependency licenses remain
-independent. Source alpha is v0.7.0; Stage 15 candidate is 0.7.1, not a release.
+independent. Release candidate is 0.7.1; publication is a separate owner decision.
 
 The frozen directory preserves exact nested wheel license files and CPython's full
 LICENSE.txt. `packaging/licenses/` adds Qt LGPL/GPL/exception texts, embedded Qt
@@ -30,7 +30,9 @@ LGPL distribution method; upstream links alone are not a source-delivery guarant
 
 The release runtime is official CPython 3.14.8 x64, with its complete PSF and bundled
 component notices. Source compatibility remains Python 3.12+. Its native DLL inputs
-are checked against the pinned official archive. cryptography 50.0.2 embeds OpenSSL
+are checked against the pinned official archive, except SQLite 3.54.0, which is
+separately authenticated and shipped instead of CPython’s original SQLite 3.50.4.
+SQLite’s complete canonical source is in the companion catalogue. cryptography 50.0.2 embeds OpenSSL
 4.0.3; CPython uses OpenSSL 3.5.9. Full upstream sources and checksum evidence were
 acquired. Rust crate notices include Unicode and Apache/LLVM exceptions where
 applicable, and the Rust standard library's MIT/Apache notices.
@@ -54,7 +56,8 @@ or image pack is bundled.
 
 ## Distribution remains a separate decision
 
-The PR contains source/notices only, no binary uploads. Before public installer
+Release preparation includes a private companion source archive, without public
+binary uploads. See [exact sources and replacement](docs/LIBRARY_SOURCES.md). Before public installer
 release the owner must approve distribution, complete corresponding-source delivery
 and compatible-library replacement verification, and assess the unperformed
 independent clean-Windows test. The project EXE/installer are not Authenticode signed;

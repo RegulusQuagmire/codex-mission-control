@@ -1,7 +1,7 @@
 # First launch on Windows
 
-The public alpha is distributed as source. Local Stage 15 builds are not a published
-release. Do not use renamed old executables.
+Candidate 0.7.1 is prepared; publication requires owner authorization.
+Installation, SHA256, SmartScreen and limitations: [release notes](RELEASE_0.7.1.md).
 
 1. Install into your user directory; administrator access is unnecessary. Codex,
    authentication and Git are separate prerequisites, obtained from official sources.
