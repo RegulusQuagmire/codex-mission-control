@@ -61,6 +61,8 @@ try {
         if ($process.ExitCode -ne 0) { throw ('Installed frozen launch failed: '+$case) }
         $value=Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
         if ($value.errors.Count -ne 0 -or -not $value.frozen -or $value.qtPlatform -ne 'windows') { throw 'Frozen smoke errors' }
+        $sqlite=Get-Content -LiteralPath "$root/packaging/sqlite-runtime.json" -Raw | ConvertFrom-Json
+        if ($value.sqlite.version -ne $sqlite.version -or $value.sqlite.sourceId -ne $sqlite.sourceId -or $value.sqlite.loadedDllSha256 -ne $sqlite.dll.sha256 -or [IO.Path]::GetFullPath($value.sqlite.loadedDll) -ne [IO.Path]::GetFullPath("$destination/_internal/sqlite3.dll")) { throw 'Installed SQLite runtime identity mismatch' }
     }
     $process=Start-Process -FilePath "$destination/unins000.exe" -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',('/LOG="'+$out+'/uninstall.log"')) -WindowStyle Hidden -Wait -PassThru
     if ($process.ExitCode -ne 0 -or (Test-Path -LiteralPath "$destination/MissionControl.exe") -or (Test-Path $registration)) { throw 'QA uninstall failed' }

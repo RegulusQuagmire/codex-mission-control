@@ -61,7 +61,7 @@ jobs:
         run: |
           $ErrorActionPreference='Stop'
           $tools=Get-Content "$env:RUNNER_TEMP/release-tools/tools.json" -Raw | ConvertFrom-Json
-          & $tools.python tools/build_release.py --output "$env:RUNNER_TEMP/candidate" --iscc $tools.iscc --wheelhouse $tools.wheelhouse --runtime-archive $tools.runtimeArchive
+          & $tools.python tools/build_release.py --output "$env:RUNNER_TEMP/candidate" --iscc $tools.iscc --wheelhouse $tools.wheelhouse --runtime-archive $tools.runtimeArchive --sqlite-archive $tools.sqliteArchive
           if ($LASTEXITCODE -ne 0) { throw 'Audited build failed' }
           & $tools.python -c "import setuptools.build_meta as b; b.build_sdist(r'$env:RUNNER_TEMP/sdist')"
           if ($LASTEXITCODE -ne 0) { throw 'Source distribution build failed' }

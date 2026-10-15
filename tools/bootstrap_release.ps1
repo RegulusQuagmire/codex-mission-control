@@ -11,6 +11,9 @@ function Download-Verified([string]$Url,[string]$File,[string]$Hash) {
 $runtime=Get-Content -LiteralPath "$root/packaging/python-runtime.json" -Raw | ConvertFrom-Json
 $archive=Join-Path $out 'python-runtime.zip'
 Download-Verified $runtime.url $archive $runtime.sha256
+$sqlite=Get-Content -LiteralPath "$root/packaging/sqlite-runtime.json" -Raw | ConvertFrom-Json
+$sqliteArchive=Join-Path $out $sqlite.archive.file
+Download-Verified $sqlite.archive.url $sqliteArchive $sqlite.archive.sha256
 $pythonRoot=Join-Path $out 'python'
 Expand-Archive -LiteralPath $archive -DestinationPath $pythonRoot
 $python=Join-Path $pythonRoot 'python.exe'
@@ -30,4 +33,4 @@ if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notm
 $inno=Join-Path $out 'inno'
 $process=Start-Process -FilePath $innoArchive -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/PORTABLE=1','/CURRENTUSER','/NOICONS',('/DIR="'+$inno+'"')) -WindowStyle Hidden -Wait -PassThru
 if ($process.ExitCode -ne 0 -or -not (Test-Path -LiteralPath "$inno/ISCC.exe")) { throw 'Portable compiler extraction failed' }
-@{python=$builder;runtimeArchive=$archive;wheelhouse=$wheels;iscc="$inno/ISCC.exe"} | ConvertTo-Json | Set-Content -Encoding utf8 "$out/tools.json"
+@{python=$builder;runtimeArchive=$archive;sqliteArchive=$sqliteArchive;wheelhouse=$wheels;iscc="$inno/ISCC.exe"} | ConvertTo-Json | Set-Content -Encoding utf8 "$out/tools.json"

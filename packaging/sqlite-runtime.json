@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "version": "3.54.0",
+  "sourceId": "2026-10-09 15:46:58 be8d059e9a49089ab2dce5ed26dd87aaf598fdc5fbe0b107c0dd758464bcd5e3",
+  "archive": {
+    "file": "sqlite-dll-win-x64-3540000.zip",
+    "url": "https://sqlite.org/2026/sqlite-dll-win-x64-3540000.zip",
+    "sha3_256": "f5fb500c73a3afd89976386bb8e4fdc8b5b65c052e187fb1ada1f5de034cd45b",
+    "sha256": "a548a9b5d8f695e669f71bcc4669fdc8b3e1eb79995761c81a9128262126f71c",
+    "bytes": 1450308
+  },
+  "dll": {
+    "member": "sqlite3.dll",
+    "sha256": "5ca6a16bdd2c5a5037b1e3a942d9ac1c66efe2def902b202d44774680a8a4656"
+  },
+  "source": {
+    "file": "sqlite-src-3540000.zip",
+    "url": "https://sqlite.org/2026/sqlite-src-3540000.zip",
+    "sha3_256": "a5c29342ca185abcda332448fbb27c536661245be27e20199b46c49099b0e15e",
+    "sha256": "8847659821e0c5116bd14a94644c82ba932b2d9a05ac81af2e34af814aad7c58",
+    "bytes": 14881448
+  }
+}

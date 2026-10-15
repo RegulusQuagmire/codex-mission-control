@@ -1,30 +1,17 @@
 # Codex Mission Control
 
-Stage 13 in main adds Intelligent Router 2.0: explainable task assessment,
-conservative validated history and mission inspection without inference.
-[Algorithm, workflow and limits](docs/STAGE13.md). The public version is unchanged.
-
-The local Stage 14 branch adds projects from an overall goal: draft plans, file and
-command review, dependencies, progress and separate approvals.
-[Workflow, authority boundaries and limits](docs/STAGE14.md). Stage 14 is not merged into main.
-
-Stage 12 **Concept C Evolution** adds an action-first Dashboard,
-Router inspection, mission search and explicit quota freshness.
-See [changes, validation and before/after captures](docs/STAGE12.md).
+Stage 11–15 are merged into main. The first Windows release **0.7.1** is being
+prepared; binary publication still requires owner authorization.
+[Installation, updates, RU/EN release notes and limitations](docs/RELEASE_0.7.1.md).
 
 [Русский](README.md) | **English**
 
 An open-source command center for Codex workflows.
 
-**v0.7.0 — Public Alpha / Early Development.** A Windows desktop application
-for managing your own Codex missions, selecting models, monitoring available
-limits, and reviewing generated project changes before execution.
-
-This source snapshot includes completed development stages 1–10, RU/EN localization
-and the Concept C Evolution interface (stage 12). Graceful
-Pause & Resume (stage 11) is excluded from that published snapshot. The current development branch adds Stage 11 and checkpoint review to Evolution;
-see [workflow and limitations](docs/STAGE11_INTEGRATION.md). The first
-public version is 0.7.0; earlier private version numbers did not indicate public maturity.
+**0.7.1 — Windows release candidate; the first public source alpha was v0.7.0.**
+Mission Control manages Codex tasks, model policies, limits and result review.
+Checkpoint consent, Concept C Evolution, routing and project plans share the existing
+queue and independent approvals. [Security boundaries](SECURITY.md).
 
 ## Screenshots
 
@@ -112,9 +99,9 @@ percentages are not known. [Security details](docs/SECURITY_HARDENING.md).
 
 ## Roadmap
 
-See [ROADMAP.md](ROADMAP.md). Stage 11 checkpoint review is integrated in the development branch;
-routing upgrades and project orchestration remain future work. This source update
-does not create a new release or change the historical v0.7.0 snapshot.
+See [ROADMAP.md](ROADMAP.md). Stage 11–15 are merged into main. Release 0.7.1
+preparation preserves existing access boundaries and approvals. Publication
+requires separate owner authorization.
 
 ## Development and contributing
 

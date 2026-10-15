@@ -1,7 +1,9 @@
 include README.md LICENSE THIRD_PARTY_NOTICES.md ARCHITECTURE.md CHANGELOG.md ROADMAP.md CONTRIBUTING.md SECURITY.md
+include README.en.md .gitattributes .gitignore
 include *.pyw *.vbs
 recursive-include docs *.md *.json *.png
 recursive-include packaging *.py *.ps1 *.spec *.iss *.txt *.json
+recursive-include packaging/licenses *
 recursive-include tools *.py *.ps1
 recursive-include tests *.py
 recursive-include .github/workflows *.yml
