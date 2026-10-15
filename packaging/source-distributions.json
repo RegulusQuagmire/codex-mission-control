@@ -1,0 +1,238 @@
+{
+  "schema": 1,
+  "scope": "Exact upstream sources acquired locally; no source archives or binaries published by this PR. Qt attribution and Rust crate lists are conservative source/build supersets, not counts of shipped components.",
+  "sources": [
+    {
+      "path": "cryptography-50.0.2.tar.gz",
+      "sha256": "dea608ac97229edf31dcf976e158182a4aa4f76dda40b4a9ffca84bdcb98d173",
+      "bytes": 58531869,
+      "url": "https://codeload.github.com/pyca/cryptography/tar.gz/refs/tags/50.0.2",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "hooks-2026.8.tar.gz",
+      "sha256": "bf03428380f121c996c189c3e69cd9dc633e16048482840c46b53484ec5cf74b",
+      "bytes": 198567,
+      "url": "https://codeload.github.com/pyinstaller/pyinstaller-hooks-contrib/tar.gz/refs/tags/v2026.8",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "inno-6.7.3.tar.gz",
+      "sha256": "34396af300acba9d0bd0280d8e2a2c043e6c62610f5661e9a0fa80beff826cfc",
+      "bytes": 5393950,
+      "url": "https://codeload.github.com/jrsoftware/issrc/tar.gz/refs/tags/is-6_7_3",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "pyinstaller-6.22.0.tar.gz",
+      "sha256": "f1594a3b9112941ff4939bc770003338996f820e87176dfa5d76c4e78027082e",
+      "bytes": 3613736,
+      "url": "https://codeload.github.com/pyinstaller/pyinstaller/tar.gz/refs/tags/v6.22.0",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "pyside-setup-6.12.0.tar.xz",
+      "sha256": "099c1a597cf33c1b000e11cf68a0b82d216fb802bf81726efc720394f10c7751",
+      "bytes": 18211772,
+      "url": "https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-6.12.0-src/pyside-setup-everywhere-src-6.12.0.tar.xz",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "python-3.14.8.tar.xz",
+      "sha256": "c2215904f02b175596dc49351585104f4bc20341e1c47378b26a2c274360ce73",
+      "bytes": 24130644,
+      "url": "https://www.python.org/ftp/python/3.14.8/Python-3.14.8.tar.xz",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "qtbase-6.12.0.tar.gz",
+      "sha256": "dff6570582c272cbe744d2e460700318262af505460f4215276459970ae31b46",
+      "bytes": 68693288,
+      "url": "https://codeload.github.com/qt/qtbase/tar.gz/refs/tags/v6.12.0",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "qtsvg-6.12.0.tar.gz",
+      "sha256": "38d440c4e97c90ce4f5b76c65dcd63d716d2ef4852baa6fb0926fb94bb96ea66",
+      "bytes": 2629493,
+      "url": "https://codeload.github.com/qt/qtsvg/tar.gz/refs/tags/v6.12.0",
+      "acquiredAndHashed": true
+    },
+    {
+      "path": "openssl-3.5.9.tar.gz",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+      "sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "checksumUrl": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz.sha256",
+      "upstreamChecksumMatched": true
+    },
+    {
+      "path": "openssl-4.0.3.tar.gz",
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-4.0.3/openssl-4.0.3.tar.gz",
+      "sha256": "325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9",
+      "checksumUrl": "https://github.com/openssl/openssl/releases/download/openssl-4.0.3/openssl-4.0.3.tar.gz.sha256",
+      "upstreamChecksumMatched": true
+    }
+  ],
+  "rustCrates": [
+    {
+      "name": "asn1-0.24.1.crate",
+      "url": "https://static.crates.io/crates/asn1/asn1-0.24.1.crate",
+      "sha256": "c9795210620c0cb3f9a7ce4f882808c38e1ef7b347c90591dceae0886e031fb1"
+    },
+    {
+      "name": "asn1_derive-0.24.1.crate",
+      "url": "https://static.crates.io/crates/asn1_derive/asn1_derive-0.24.1.crate",
+      "sha256": "909e307f1cc32bb8bccbd98f446e6d1bf03fa30f7b53a4337da7181ad30fa11a"
+    },
+    {
+      "name": "base64-0.23.0.crate",
+      "url": "https://static.crates.io/crates/base64/base64-0.23.0.crate",
+      "sha256": "b25655df2c3cdd83c5e5b293b88acd880332b2ddadd7c30ac43144fdc0033da9"
+    },
+    {
+      "name": "bitflags-2.13.1.crate",
+      "url": "https://static.crates.io/crates/bitflags/bitflags-2.13.1.crate",
+      "sha256": "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da"
+    },
+    {
+      "name": "cc-1.4.0.crate",
+      "url": "https://static.crates.io/crates/cc/cc-1.4.0.crate",
+      "sha256": "5add81bb678e6cb321aff7fa0dc7689ad82b112dbc032cea19f91d6b8e3582b9"
+    },
+    {
+      "name": "cfg-if-1.0.4.crate",
+      "url": "https://static.crates.io/crates/cfg-if/cfg-if-1.0.4.crate",
+      "sha256": "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+    },
+    {
+      "name": "find-msvc-tools-0.1.9.crate",
+      "url": "https://static.crates.io/crates/find-msvc-tools/find-msvc-tools-0.1.9.crate",
+      "sha256": "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
+    },
+    {
+      "name": "foreign-types-0.3.2.crate",
+      "url": "https://static.crates.io/crates/foreign-types/foreign-types-0.3.2.crate",
+      "sha256": "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1"
+    },
+    {
+      "name": "foreign-types-shared-0.1.1.crate",
+      "url": "https://static.crates.io/crates/foreign-types-shared/foreign-types-shared-0.1.1.crate",
+      "sha256": "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
+    },
+    {
+      "name": "heck-0.5.0.crate",
+      "url": "https://static.crates.io/crates/heck/heck-0.5.0.crate",
+      "sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+    },
+    {
+      "name": "itoa-1.0.18.crate",
+      "url": "https://static.crates.io/crates/itoa/itoa-1.0.18.crate",
+      "sha256": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+    },
+    {
+      "name": "libc-0.2.189.crate",
+      "url": "https://static.crates.io/crates/libc/libc-0.2.189.crate",
+      "sha256": "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
+    },
+    {
+      "name": "once_cell-1.21.4.crate",
+      "url": "https://static.crates.io/crates/once_cell/once_cell-1.21.4.crate",
+      "sha256": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+    },
+    {
+      "name": "openssl-0.10.81.crate",
+      "url": "https://static.crates.io/crates/openssl/openssl-0.10.81.crate",
+      "sha256": "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45"
+    },
+    {
+      "name": "openssl-macros-0.1.1.crate",
+      "url": "https://static.crates.io/crates/openssl-macros/openssl-macros-0.1.1.crate",
+      "sha256": "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c"
+    },
+    {
+      "name": "openssl-sys-0.9.117.crate",
+      "url": "https://static.crates.io/crates/openssl-sys/openssl-sys-0.9.117.crate",
+      "sha256": "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695"
+    },
+    {
+      "name": "pem-4.0.0.crate",
+      "url": "https://static.crates.io/crates/pem/pem-4.0.0.crate",
+      "sha256": "d354a98a3d1251555de99e8fdd8afda05573c31b82f59063a7b0a29b5527f120"
+    },
+    {
+      "name": "pkg-config-0.3.33.crate",
+      "url": "https://static.crates.io/crates/pkg-config/pkg-config-0.3.33.crate",
+      "sha256": "19f132c84eca552bf34cab8ec81f1c1dcc229b811638f9d283dceabe58c5569e"
+    },
+    {
+      "name": "portable-atomic-1.14.0.crate",
+      "url": "https://static.crates.io/crates/portable-atomic/portable-atomic-1.14.0.crate",
+      "sha256": "3d20d5497ef88037a52ff98267d066e7f11fcc5e99bbfbd58a42336193aacec3"
+    },
+    {
+      "name": "proc-macro2-1.0.107.crate",
+      "url": "https://static.crates.io/crates/proc-macro2/proc-macro2-1.0.107.crate",
+      "sha256": "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
+    },
+    {
+      "name": "pyo3-0.29.2.crate",
+      "url": "https://static.crates.io/crates/pyo3/pyo3-0.29.2.crate",
+      "sha256": "4688ddedf473e32662b9b067670129a8afb8c18e351482c70d62ba4a88171e8b"
+    },
+    {
+      "name": "pyo3-build-config-0.29.2.crate",
+      "url": "https://static.crates.io/crates/pyo3-build-config/pyo3-build-config-0.29.2.crate",
+      "sha256": "f41027e41b4bd03f6e60f9f417fe24a6341a6bb744edd62b6f709f2a52ea30e9"
+    },
+    {
+      "name": "pyo3-ffi-0.29.2.crate",
+      "url": "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-0.29.2.crate",
+      "sha256": "e591a95526fead067432c3b3a33fc74770b87b1e04e73671090d9c2055a2b327"
+    },
+    {
+      "name": "pyo3-macros-0.29.2.crate",
+      "url": "https://static.crates.io/crates/pyo3-macros/pyo3-macros-0.29.2.crate",
+      "sha256": "73225868fc1cd84eef2c3c230ddb91273bf1de46aeb8a4248da76d32a0924a1c"
+    },
+    {
+      "name": "pyo3-macros-backend-0.29.2.crate",
+      "url": "https://static.crates.io/crates/pyo3-macros-backend/pyo3-macros-backend-0.29.2.crate",
+      "sha256": "571575aa3749fa6216757dd47d2a3e7ef360f329a40f0666a9fbd14889024952"
+    },
+    {
+      "name": "quote-1.0.47.crate",
+      "url": "https://static.crates.io/crates/quote/quote-1.0.47.crate",
+      "sha256": "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
+    },
+    {
+      "name": "self_cell-1.3.0.crate",
+      "url": "https://static.crates.io/crates/self_cell/self_cell-1.3.0.crate",
+      "sha256": "2ab42ca02749e120097e328d91d415325bdf43b1c72c4c8badf37375fe40a813"
+    },
+    {
+      "name": "shlex-2.0.1.crate",
+      "url": "https://static.crates.io/crates/shlex/shlex-2.0.1.crate",
+      "sha256": "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
+    },
+    {
+      "name": "syn-2.0.119.crate",
+      "url": "https://static.crates.io/crates/syn/syn-2.0.119.crate",
+      "sha256": "872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297"
+    },
+    {
+      "name": "target-lexicon-0.13.5.crate",
+      "url": "https://static.crates.io/crates/target-lexicon/target-lexicon-0.13.5.crate",
+      "sha256": "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
+    },
+    {
+      "name": "unicode-ident-1.0.24.crate",
+      "url": "https://static.crates.io/crates/unicode-ident/unicode-ident-1.0.24.crate",
+      "sha256": "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+    },
+    {
+      "name": "vcpkg-0.2.15.crate",
+      "url": "https://static.crates.io/crates/vcpkg/vcpkg-0.2.15.crate",
+      "sha256": "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
+    }
+  ]
+}

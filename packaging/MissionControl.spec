@@ -1,17 +1,29 @@
 from pathlib import Path
 from importlib.metadata import distribution
 import sys
+import os
+import json
+from PyInstaller.config import CONF
 root = Path(SPECPATH).parent
+sys.path.insert(0,str(root/'tools'))
+from release_audit import binary_provenance, wheel_owners
 notices=[(str(root/'LICENSE'),'.'),(str(root/'THIRD_PARTY_NOTICES.md'),'.'),
-         (str(root/'docs/RELEASE.md'),'docs'),(str(root/'packaging/licenses'),'licenses/Qt')]
+         (str(root/'docs/RELEASE.md'),'docs'),(str(root/'docs/FIRST_RUN.md'),'docs'),
+         (str(root/'docs/FIRST_RUN.en.md'),'docs'),(str(root/'packaging/licenses'),'licenses/third-party')]
+notices.append((str(root/'packaging/INSTALLER_LICENSE.txt'),'.'))
+notices.append((str(root/'packaging/source-distributions.json'),'.'))
 notices.append((str(root/'src/mission_control/desktop/translations.json'),'mission_control/desktop'))
-for name in ('PySide6-Essentials','shiboken6','cryptography','cffi','pyinstaller'):
+for name in ('PySide6-Essentials','shiboken6','cryptography','cffi','pycparser','pyinstaller','pyinstaller-hooks-contrib'):
     dist=distribution(name)
     for item in dist.files or []:
-        if '/licenses/' in str(item).replace('\\','/'):
-            notices.append((str(dist.locate_file(item)),'licenses/'+name))
+        relative=str(item).replace('\\','/')
+        if '/licenses/' in relative:
+            # Preserve nested names: flattening loses distinct vendored LICENSE files.
+            tail=Path(relative.split('/licenses/',1)[1])
+            notices.append((str(dist.locate_file(item)),'licenses/'+name+'/'+tail.parent.as_posix()))
 python_license=Path(sys.base_prefix)/'LICENSE.txt'
-if python_license.exists():notices.append((str(python_license),'licenses/Python'))
+if not python_license.exists():raise RuntimeError('Missing CPython license')
+notices.append((str(python_license),'licenses/Python'))
 a = Analysis([str(root/'packaging/desktop_entry.py')], pathex=[str(root/'src')],
     binaries=[], datas=notices, hiddenimports=['cryptography.hazmat.primitives.ciphers.aead'],
     hookspath=[], hooksconfig={}, runtime_hooks=[],
@@ -21,6 +33,12 @@ a = Analysis([str(root/'packaging/desktop_entry.py')], pathex=[str(root/'src')],
 # runtime can put a different ICU on PATH; collecting it shadows System32 and
 # breaks QtCore at startup. Windows 10 2004+ supplies the required system API.
 a.binaries=[item for item in a.binaries if Path(item[0]).name.lower() not in {'icuuc.dll','icudt78.dll'}]
+# The application renders Widgets with QPainter; no software OpenGL or image-file
+# viewing feature is present. Keep SVG/style support; omit unused codec plugins.
+a.binaries=[item for item in a.binaries if Path(item[0]).name.lower()!='opengl32sw.dll'
+            and ('/imageformats/' not in item[0].replace('\\','/').lower() or Path(item[0]).name.lower()=='qsvg.dll')]
+provenance=binary_provenance(a.binaries,Path(sys.base_prefix),wheel_owners(root,Path(os.environ['CMC_BUILD_WHEELHOUSE']),Path(os.environ['CMC_BUILD_RUNTIME_ARCHIVE'])))
+(Path(CONF['workpath'])/'native-inputs.json').write_text(json.dumps(provenance,indent=2)+'\n')
 pyz = PYZ(a.pure)
 exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name='MissionControl',
     debug=False, bootloader_ignore_signals=False, strip=False, upx=False, console=False,
